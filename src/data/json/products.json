@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Product A",
+    "description": "Description of Product A",
+    "price": 10.0,
+    "path": "/products/Product1.zip"
+  },
+  {
+    "id": 2,
+    "name": "Product B",
+    "description": "Description of Product B",
+    "price": 15.0,
+    "path": "/products/Product2.zip"
+  },
+  {
+    "id": 3,
+    "name": "Product C",
+    "description": "Description of Product C",
+    "price": 20.0,
+    "path": "/products/Product3.zip"
+  }
+]

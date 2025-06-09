@@ -2,7 +2,7 @@
 import fetchData from './fetchData';
 
 export const createUser = async (name, email, password) => {
-  const data = await fetchData('https://celestialcenter-835108787508.us-south1.run.app/api/users', {
+  const data = await fetchData('https://sojea-871454313426.us-south1.run.app/api/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,7 +14,7 @@ export const createUser = async (name, email, password) => {
 };
 
 export const loginUser = async (email, password) => {
-  const data = await fetchData('https://celestialcenter-835108787508.us-south1.run.app/api/users/login', {
+  const data = await fetchData('https://sojea-871454313426.us-south1.run.app/api/users/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

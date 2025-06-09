@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import Star from '../components/Star';
 import Navbar from '../components/Navbar';
-import products from '../data/products';
+import products from '../components/products';
 
 const Home = () => {
   const navigate = useNavigate();

@@ -1,0 +1,24 @@
+{
+  "licenses": [
+    {
+      "licenseKey": "8185ABD02D15E6387D34A0875F1F90F3",
+      "userId": 1,
+      "productId": 1,
+      "name": "Product A",
+      "quantity": 1,
+      "usesRemaining": 1,
+      "created": "2024-11-16T15:51:12.751Z",
+      "status": "active"
+    },
+    {
+      "licenseKey": "C82971366149442877569D9454FD85C5",
+      "userId": 1,
+      "productId": 2,
+      "name": "Product B",
+      "quantity": 1,
+      "usesRemaining": 1,
+      "created": "2024-11-16T15:53:36.283Z",
+      "status": "active"
+    }
+  ]
+}

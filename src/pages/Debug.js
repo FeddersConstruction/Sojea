@@ -8,7 +8,7 @@ const Debug = () => {
     const fetchDebugData = async () => {
       console.log('Starting fetch to /api/users/view...');
       try {
-        const response = await fetch('https://celestialcenter-835108787508.us-south1.run.app/api/users/view');
+        const response = await fetch('https://sojea-871454313426.us-south1.run.app/api/users/view');
         console.log('Response received:', response);
 
         if (!response.ok) {

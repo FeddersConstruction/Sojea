@@ -12,7 +12,7 @@ const Checkedout = () => {
   const [downloadStatus, setDownloadStatus] = useState({});
   const navigate = useNavigate();
   
-  const BACKEND_URL = 'https://celestialcenter-835108787508.us-south1.run.app';
+  const BACKEND_URL = 'https://sojea-871454313426.us-south1.run.app';
 
   const downloadProduct = async (productId, productName) => {
     try {

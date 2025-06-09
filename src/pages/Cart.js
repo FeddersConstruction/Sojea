@@ -19,7 +19,7 @@ const Cart = () => {
     const fetchCart = async () => {
       try {
         const data = await fetchData(
-          `https://celestialcenter-835108787508.us-south1.run.app/api/cart/${user.id}`
+          `https://sojea-871454313426.us-south1.run.app/api/cart/${user.id}`
         );
         setCartItems(data);
         setError(null);
@@ -47,7 +47,7 @@ const Cart = () => {
 
     try {
       await fetchData(
-        'https://celestialcenter-835108787508.us-south1.run.app/api/cart/remove',
+        'https://sojea-871454313426.us-south1.run.app/api/cart/remove',
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },

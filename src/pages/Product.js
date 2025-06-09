@@ -17,7 +17,7 @@ const Product = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await fetchData('https://celestialcenter-835108787508.us-south1.run.app/api/products');
+        const data = await fetchData('https://sojea-871454313426.us-south1.run.app/api/products');
         setProducts(data);
         setError(null);
 
@@ -61,7 +61,7 @@ const Product = () => {
     }
 
     try {
-      await fetchData('https://celestialcenter-835108787508.us-south1.run.app/api/cart/add', {
+      await fetchData('https://sojea-871454313426.us-south1.run.app/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cartData),
