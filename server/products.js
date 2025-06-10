@@ -6,7 +6,7 @@ const mime   = require('mime-types');
 const router = express.Router();
 
 const storage = new Storage();
-const bucketName = 'celestialcenter';
+const bucketName = 'sojea';
 const productsJson = 'products.json';
 
 async function findFile(name) {

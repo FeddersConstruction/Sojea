@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Cloud Storage setup
 const storage = new Storage();
-const bucketName = 'celestialcenter';
+const bucketName = 'sojea';
 const cartFilePath = 'json/cart.json';
 const usersFilePath = 'json/users.json';
 

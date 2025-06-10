@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const router = express.Router();
 
 const storage = new Storage();
-const bucketName = 'celestialcenter';
+const bucketName = 'sojea';
 const filePath   = 'json/licenses.json';
 
 async function ensureFile() {

@@ -4,7 +4,7 @@ const { Storage } = require('@google-cloud/storage');
 const router = express.Router();
 
 const storage = new Storage();
-const bucketName = 'celestialcenter';
+const bucketName = 'sojea';
 const usersFile = 'json/users.json';
 
 async function ensureUsers() {
