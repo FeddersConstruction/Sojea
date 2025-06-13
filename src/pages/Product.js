@@ -4,28 +4,34 @@ import { useParams, useNavigate } from 'react-router-dom';
 import fetchData from '../utils/fetchData';
 import { AuthContext } from '../AuthContext';
 import '../styles/Product.css';
+import { API_BASE_URL } from '../utils/config';
 
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useContext(AuthContext); // Access user from AuthContext
+  const { isAuthenticated, user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState(null);
+  const [product, setProduct]   = useState(null);
+  const [error, setError]       = useState(null);
   const [cartMessage, setCartMessage] = useState('');
+
+  const BASE = API_BASE_URL;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await fetchData('https://sojea-871454313426.us-south1.run.app/api/products');
+        console.log('[Product] Fetching products from:', `${BASE}/api/products`);
+
+        const data = await fetchData(`${BASE}/api/products`);
         setProducts(data);
         setError(null);
 
         if (id !== undefined) {
-          const foundProduct = data.find((p) => p.id === parseInt(id, 10));
-          setProduct(foundProduct);
+          const found = data.find(p => p.id === parseInt(id, 10));
+          setProduct(found);
         }
       } catch (err) {
+        console.error('[Product] Error fetching products:', err);
         setError(err.message);
         setProducts([]);
         setProduct(null);
@@ -33,47 +39,44 @@ const Product = () => {
     };
 
     fetchProducts();
-  }, [id]);
+  }, [id, BASE]);
 
   const handleAddToCart = async () => {
     if (!isAuthenticated || !user) {
-      navigate('/login'); // Redirect to login page
+      navigate('/login');
       return;
     }
 
-
     const cartData = {
-      userId: user.id || user.userId, // Adjust based on your user object
+      userId:    user.id || user.userId,
       productId: product.id,
-      quantity: 1,
-      name: product.name,
-      price: product.price,
+      quantity:  1,
+      name:      product.name,
+      price:     product.price,
     };
 
-    console.log('Adding to cart with data:', cartData);
-    console.log('User object:', user);
-    console.log('Product object:', product);
+    console.log('[Product] Adding to cart with data:', cartData);
 
     if (product.price === undefined) {
-      console.error('Product price is undefined.');
+      console.error('[Product] Product price is undefined.');
       setCartMessage('Error: Product price is missing.');
       return;
     }
 
     try {
-      await fetchData('https://sojea-871454313426.us-south1.run.app/api/cart/add', {
+      await fetchData(`${BASE}/api/cart/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cartData),
       });
       setCartMessage('Product added to cart');
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      if (error.message.includes('401')) {
-        setCartMessage('User not authorized. Please log in again.');
-      } else {
-        setCartMessage('Error adding to cart');
-      }
+    } catch (err) {
+      console.error('[Product] Error adding to cart:', err);
+      setCartMessage(
+        err.message.includes('401')
+          ? 'User not authorized. Please log in again.'
+          : 'Error adding to cart'
+      );
     }
   };
 
@@ -84,10 +87,10 @@ const Product = () => {
       <div className="product-list">
         <h1>Products</h1>
         <ul>
-          {products.map((product) => (
-            <li key={product.id} onClick={() => navigate(`/product/${product.id}`)}>
-              <h2>{product.name}</h2>
-              <p>{product.description}</p>
+          {products.map(p => (
+            <li key={p.id} onClick={() => navigate(`/product/${p.id}`)}>
+              <h2>{p.name}</h2>
+              <p>{p.description}</p>
             </li>
           ))}
         </ul>

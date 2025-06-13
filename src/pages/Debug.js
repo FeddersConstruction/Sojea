@@ -1,4 +1,6 @@
+// src/pages/Debug.js
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../utils/config';
 
 const Debug = () => {
   const [data, setData] = useState(null);
@@ -8,7 +10,9 @@ const Debug = () => {
     const fetchDebugData = async () => {
       console.log('Starting fetch to /api/users/view...');
       try {
-        const response = await fetch('https://sojea-871454313426.us-south1.run.app/api/users/view');
+        const response = await fetch(
+          `${API_BASE_URL}/api/users/view`
+        );
         console.log('Response received:', response);
 
         if (!response.ok) {

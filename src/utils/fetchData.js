@@ -1,29 +1,18 @@
-// src/utils/fetchData.js
-const fetchData = async (url, options = {}) => {
-  try {
-    //console.log(`Starting fetch to ${url} with options:`, options);
-    const response = await fetch(url, options);
+export default async function fetchData(url, options = {}) {
+  const res = await fetch(url, options);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Error from server (${response.status}): ${errorText}`);
-      throw new Error(`Error: ${response.status} - ${errorText}`);
-    }
-
-    const contentType = response.headers.get('content-type');
-
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      //console.log('Data fetched successfully:', data);
-      return data;
-    } else {
-      console.log('Non-JSON response received:', response);
-      return response; // Return raw response for non-JSON content
-    }
-  } catch (error) {
-    console.error('Fetch error:', error);
-    throw error;
+  // 1) HTTP status check
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`Fetch error ${res.status}: ${text}`);
   }
-};
 
-export default fetchData;
+  // 2) Content-Type check
+  const contentType = res.headers.get('Content-Type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Expected JSON, but got "${contentType}"`);
+  }
+
+  // 3) Parse & return JSON
+  return await res.json();
+}

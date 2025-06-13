@@ -1,26 +1,23 @@
+// src/pages/Checkedout.js  (detailed downloadAllProducts version)
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchData from '../utils/fetchData';
 import { AuthContext } from '../AuthContext';
 import '../styles/Checkedout.css';
+import { API_BASE_URL } from '../utils/config';
 
 const Checkedout = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
   const [licenses, setLicenses] = useState([]);
   const [licenseError, setLicenseError] = useState(null);
-  const [cartError, setCartError] = useState(null);
   const [downloadStatus, setDownloadStatus] = useState({});
   const navigate = useNavigate();
-  
-  const BACKEND_URL = 'https://sojea-871454313426.us-south1.run.app';
 
   const downloadProduct = async (productId, productName) => {
     try {
       setDownloadStatus(prev => ({ ...prev, [productId]: 'downloading' }));
-      
-      const response = await fetch(`${BACKEND_URL}/api/products/${productId}/download`);
+      const response = await fetch(`${API_BASE_URL}/api/products/${productId}/download`);
       if (!response.ok) throw new Error('Download failed');
-      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -30,7 +27,6 @@ const Checkedout = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
       setDownloadStatus(prev => ({ ...prev, [productId]: 'completed' }));
     } catch (error) {
       console.error('Download error:', error);
@@ -38,64 +34,41 @@ const Checkedout = () => {
     }
   };
 
-  // Update downloadAllProducts function
   const downloadAllProducts = async (products) => {
-    console.log('Starting downloads for products:', products);
-    
     for (const product of products) {
       try {
-        console.log(`Attempting download for product ${product.productId}: ${product.name}`);
-        
-        // First verify product exists
-        const productCheck = await fetch(`${BACKEND_URL}/api/products/${product.productId}`);
-        if (!productCheck.ok) {
-          throw new Error(`Product verification failed: ${productCheck.status}`);
-        }
-        
+        // verify existence
+        const check = await fetch(`${API_BASE_URL}/api/products/${product.productId}`);
+        if (!check.ok) throw new Error(`Verification failed: ${check.status}`);
         setDownloadStatus(prev => ({ ...prev, [product.productId]: 'downloading' }));
-        
-        // Then attempt download
-        const downloadResponse = await fetch(`${BACKEND_URL}/api/products/${product.productId}/download`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add if using auth
-            'Accept': 'application/octet-stream'
+
+        const resp = await fetch(
+          `${API_BASE_URL}/api/products/${product.productId}/download`,
+          {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Accept': 'application/octet-stream'
+            }
           }
-        });
-
-        if (!downloadResponse.ok) {
-          throw new Error(`Download failed with status: ${downloadResponse.status}`);
-        }
-
-        const contentType = downloadResponse.headers.get('content-type');
-        console.log(`Download response type: ${contentType}`);
-        
-        const blob = await downloadResponse.blob();
-        console.log(`Received blob size: ${blob.size} bytes`);
-
+        );
+        if (!resp.ok) throw new Error(`Download failed: ${resp.status}`);
+        const blob = await resp.blob();
+        const ext = resp.headers.get('content-type')?.split('/')[1] || 'zip';
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        // Get file extension from content-type or default to .zip
-        const extension = contentType?.split('/')[1] || 'zip';
-        a.download = `${product.name}.${extension}`;
-        
+        a.download = `${product.name}.${ext}`;
         document.body.appendChild(a);
         a.click();
-        
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        
-        console.log(`Download completed for ${product.name}`);
         setDownloadStatus(prev => ({ ...prev, [product.productId]: 'completed' }));
-      } catch (error) {
-        console.error(`Download failed for ${product.name}:`, error);
+      } catch (err) {
+        console.error(`Download failed for ${product.name}:`, err);
         setDownloadStatus(prev => ({ ...prev, [product.productId]: 'failed' }));
-        // Continue with next product instead of stopping
       }
-      
-      // Delay between downloads
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(r => setTimeout(r, 1500));
     }
   };
 
@@ -105,20 +78,15 @@ const Checkedout = () => {
       return;
     }
 
-    // Modify createLicensesAndClearCart
     const createLicensesAndClearCart = async () => {
       try {
-        // Get cart items
-        const cartItems = await fetchData(`${BACKEND_URL}/api/cart/${user.id}`);
-        console.log('Cart items:', cartItems);
-        
-        if (!cartItems || cartItems.length === 0) {
+        const cartItems = await fetchData(`${API_BASE_URL}/api/cart/${user.id}`);
+        if (!cartItems.length) {
           setLicenseError('Your cart is empty');
           return;
         }
-    
-        // Create licenses
-        const licenseResponse = await fetchData(`${BACKEND_URL}/api/licenses`, {
+
+        await fetchData(`${API_BASE_URL}/api/licenses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -130,53 +98,42 @@ const Checkedout = () => {
             }))
           })
         });
-        console.log('Licenses created:', licenseResponse);
-    
-        // Fetch updated licenses
-        const userLicenses = await fetchData(`${BACKEND_URL}/api/licenses/${user.id}`);
-        console.log('User licenses fetched:', userLicenses);
+
+        const userLicenses = await fetchData(`${API_BASE_URL}/api/licenses/${user.id}`);
         setLicenses(userLicenses.licenses);
-    
-        // Download all products
-        console.log('Starting download process...');
+
         await downloadAllProducts(cartItems);
-        console.log('All downloads completed');
-    
-        // Clear cart only after downloads complete
-        await fetchData(`${BACKEND_URL}/api/cart/clear`, {
+
+        await fetchData(`${API_BASE_URL}/api/cart/clear`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user.id })
         });
-        console.log('Cart cleared successfully');
-    
-      } catch (error) {
-        console.error('Checkout process error:', error);
+      } catch (err) {
+        console.error('Checkout process error:', err);
         setLicenseError('Failed to process checkout. Please contact support.');
       }
     };
 
     createLicensesAndClearCart();
-  }, [isAuthenticated, user, navigate, BACKEND_URL]);
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="checkedout-container">
       <h1>Thank you for your purchase!</h1>
-
       {licenseError ? (
         <div className="error-message">{licenseError}</div>
       ) : (
         <div className="licenses-container">
-          {licenses.map(license => (
-            <div key={license.licenseKey} className="license-card">
-              <h2>{license.name}</h2>
-              <p><strong>License Key:</strong> {license.licenseKey}</p>
-              <p><strong>Uses Remaining:</strong> {license.usesRemaining}</p>
+          {licenses.map(lic => (
+            <div key={lic.licenseKey} className="license-card">
+              <h2>{lic.name}</h2>
+              <p><strong>License Key:</strong> {lic.licenseKey}</p>
+              <p><strong>Uses Remaining:</strong> {lic.usesRemaining}</p>
             </div>
           ))}
         </div>
       )}
-
       <button className="home-button" onClick={() => navigate('/')}>
         Return Home
       </button>

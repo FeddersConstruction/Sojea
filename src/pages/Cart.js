@@ -1,40 +1,41 @@
+// src/pages/Cart.js
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchData from '../utils/fetchData';
 import { AuthContext } from '../AuthContext';
 import '../styles/Cart.css';
+import { API_BASE_URL } from '../utils/config';
 
 const Cart = () => {
-  const { isAuthenticated, user, logout } = useContext(AuthContext); // Access user and logout
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [cartItems, setCartItems] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
-      navigate('/login'); // Redirect unauthenticated users to login page
+      navigate('/login');
       return;
     }
 
     const fetchCart = async () => {
       try {
-        const data = await fetchData(
-          `https://sojea-871454313426.us-south1.run.app/api/cart/${user.id}`
-        );
+        const data = await fetchData(`${API_BASE_URL}/api/cart/${user.id}`);
         setCartItems(data);
         setError(null);
       } catch (err) {
         console.error('Error fetching cart:', err);
         if (err.message.includes('401')) {
           setError('User not authorized. Please log in again.');
-          logout(); // Log out the user
-          navigate('/login'); // Redirect to login page
+          logout();
+          navigate('/login');
         } else {
           setError(err.message);
         }
         setCartItems([]);
       }
     };
+
     fetchCart();
   }, [isAuthenticated, user, logout, navigate]);
 
@@ -46,36 +47,27 @@ const Cart = () => {
     if (!isAuthenticated || !user) return;
 
     try {
-      await fetchData(
-        'https://sojea-871454313426.us-south1.run.app/api/cart/remove',
-        {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, productId }),
-        }
-      );
+      await fetchData(`${API_BASE_URL}/api/cart/remove`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, productId }),
+      });
       setCartItems(cartItems.filter((item) => item.productId !== productId));
-    } catch (error) {
-      console.error('Error removing item from cart:', error);
-      if (error.message.includes('401')) {
+    } catch (err) {
+      console.error('Error removing item from cart:', err);
+      if (err.message.includes('401')) {
         setError('User not authorized. Please log in again.');
-        logout(); // Log out the user
-        navigate('/login'); // Redirect to login page
+        logout();
+        navigate('/login');
       } else {
         setError('Error removing item');
       }
     }
   };
 
-  const handleLogout = () => {
-    logout(); // Log out the user
-    navigate('/login'); // Redirect to login page
-  };
-
   if (!isAuthenticated || !user) {
-    // Redirect to login page
     navigate('/login');
-    return null; // Return null while redirecting
+    return null;
   }
 
   if (error) return <div style={{ color: 'red' }}>Error: {error}</div>;
@@ -83,7 +75,7 @@ const Cart = () => {
   return (
     <div className="cart-container">
       <h1>Your Cart</h1>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={() => { logout(); navigate('/login'); }}>Logout</button>
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (

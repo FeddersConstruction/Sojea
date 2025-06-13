@@ -1,7 +1,10 @@
+// src/pages/CheckedoutSimple.js  (simplified license/clear version)
 import React, { useEffect, useState, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import fetchData from '../utils/fetchData';
 import { AuthContext } from '../AuthContext';
+import '../styles/Checkedout.css';
+import { API_BASE_URL } from '../utils/config';
 
 const Checkedout = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
@@ -9,8 +12,6 @@ const Checkedout = () => {
   const [licenseError, setLicenseError] = useState(null);
   const [cartError, setCartError] = useState(null);
   const navigate = useNavigate();
-  
-  const BACKEND_URL = 'https://sojea-871454313426.us-south1.run.app';
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -20,16 +21,13 @@ const Checkedout = () => {
 
     const createLicensesAndClearCart = async () => {
       try {
-        // 1. Fetch cart items first
-        const cartItems = await fetchData(`${BACKEND_URL}/api/cart/${user.id}`);
-        
-        if (!cartItems || cartItems.length === 0) {
+        const cartItems = await fetchData(`${API_BASE_URL}/api/cart/${user.id}`);
+        if (!cartItems.length) {
           setLicenseError('Your cart is empty');
           return;
         }
 
-        // 2. Create licenses for cart items
-        const licenseResponse = await fetchData(`${BACKEND_URL}/api/licenses`, {
+        await fetchData(`${API_BASE_URL}/api/licenses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -42,12 +40,10 @@ const Checkedout = () => {
           })
         });
 
-        // 3. Fetch user's licenses
-        const userLicenses = await fetchData(`${BACKEND_URL}/api/licenses/${user.id}`);
+        const userLicenses = await fetchData(`${API_BASE_URL}/api/licenses/${user.id}`);
         setLicenses(userLicenses.licenses);
 
-        // 4. Clear the cart
-        await fetchData(`${BACKEND_URL}/api/cart/clear`, {
+        await fetchData(`${API_BASE_URL}/api/cart/clear`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user.id })
@@ -55,42 +51,35 @@ const Checkedout = () => {
 
         setLicenseError(null);
         setCartError(null);
-
-      } catch (error) {
-        console.error('Checkout process error:', error);
+      } catch (err) {
+        console.error('Checkout process error:', err);
         setLicenseError('Failed to process checkout. Please contact support.');
       }
     };
 
     createLicensesAndClearCart();
-  }, [isAuthenticated, user, navigate, BACKEND_URL]);
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="checkedout-container">
       <h1>Thank you for your purchase!</h1>
-
       {licenseError ? (
         <div className="error-message">{licenseError}</div>
       ) : (
         <div className="licenses-container">
-          {licenses.map(license => (
-            <div key={license.licenseKey} className="license-card">
+          {licenses.map(lic => (
+            <div key={lic.licenseKey} className="license-card">
               <h2>License Details</h2>
-              <p><strong>License Key:</strong> {license.licenseKey}</p>
-              <p><strong>Product:</strong> {license.name}</p>
-              <p><strong>Uses Remaining:</strong> {license.usesRemaining}</p>
-              <p><strong>Status:</strong> {license.status}</p>
+              <p><strong>License Key:</strong> {lic.licenseKey}</p>
+              <p><strong>Product:</strong> {lic.name}</p>
+              <p><strong>Uses Remaining:</strong> {lic.usesRemaining}</p>
+              <p><strong>Status:</strong> {lic.status}</p>
             </div>
           ))}
         </div>
       )}
-
       {cartError && <div className="error-message">{cartError}</div>}
-
-      <button 
-        className="home-button"
-        onClick={() => navigate('/')}
-      >
+      <button className="home-button" onClick={() => navigate('/')}>
         Return Home
       </button>
     </div>
