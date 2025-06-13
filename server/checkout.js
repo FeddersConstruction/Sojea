@@ -2,11 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { 
-  SquareClient, 
-  SquareEnvironment, 
-  SquareError 
-} = require('square');
+const { SquareClient, SquareEnvironment, ApiError } = require('square');
 const crypto = require('crypto');
 
 // Determine mode (expects "test" or "live")
@@ -26,6 +22,9 @@ const squareClient = new SquareClient({
     ? SquareEnvironment.Sandbox
     : SquareEnvironment.Production,
 });
+
+// Sanity-check that the payments API is available
+console.log('⚙️  payments.createPayment →', typeof squareClient.payments.createPayment);
 
 router.post('/process-payment', async (req, res) => {
   console.log('[Checkout.js] /process-payment called');
@@ -47,7 +46,7 @@ router.post('/process-payment', async (req, res) => {
   try {
     // Create the payment
     console.log('[Checkout.js] Calling Square createPayment...');
-    const response = await squareClient.paymentsApi.createPayment({
+    const { result } = await squareClient.payments.createPayment({
       sourceId:       nonce,
       idempotencyKey,
       amountMoney: {
@@ -55,15 +54,15 @@ router.post('/process-payment', async (req, res) => {
         currency: 'USD',
       },
     });
-    console.log('[Checkout.js] Square response:', response);
+    console.log('[Checkout.js] Square response:', result);
 
     // On success, return the payment object
-    res.status(200).json({ payment: response.result.payment });
+    res.status(200).json({ payment: result.payment });
   } catch (error) {
-    if (error instanceof SquareError) {
+    if (error instanceof ApiError) {
       // Handle Square API errors
-      console.error('[Checkout.js] Square API error:', error.errors);
-      res.status(400).json({ errors: error.errors });
+      console.error('[Checkout.js] Square API error:', error.result);
+      res.status(400).json({ errors: error.result });
     } else {
       // Handle unexpected errors
       console.error('[Checkout.js] Unexpected error:', error);
