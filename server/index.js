@@ -10,15 +10,21 @@ const userRoutes     = require('./users');
 
 const app = express();
 
-// ✅ CORS: allow prod site & local dev
-app.use(cors({
+const corsOptions = {
   origin: [
     'https://sojeaoj.com',
     'http://localhost:3000'
   ],
-  methods: ['GET','POST','PUT','DELETE'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],        // include OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization'],      // ensure your headers are allowed
   credentials: true
-}));
+};
+
+// apply CORS to all routes
+app.use(cors(corsOptions));
+
+// explicitly respond to preflight for any path
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
