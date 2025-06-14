@@ -1,4 +1,4 @@
-// server/checkout.js
+// "square": "^42.3.0",
 const express = require('express');
 const router  = express.Router();
 const { Client, Environment } = require('square');
