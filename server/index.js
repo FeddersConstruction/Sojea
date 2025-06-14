@@ -10,43 +10,26 @@ const userRoutes     = require('./users');
 
 const app = express();
 
-/* -------------------------------------------------- */
-/*  Global CORS                                       */
-/* -------------------------------------------------- */
-
-const corsOptions = {
+// ✅ CORS: allow prod site & local dev
+app.use(cors({
   origin: [
-    'https://sojeaoj.com',   // production front end
-    'http://localhost:3000', // local dev
+    'https://sojeaoj.com',
+    'http://localhost:3000'
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',      // (optional) common AJAX header
-  ],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // respond to all pre‑flight requests
-
-/* -------------------------------------------------- */
-/*  Middleware + Routes                               */
-/* -------------------------------------------------- */
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: true
+}));
 
 app.use(express.json());
 
+// 📦 API endpoints
 app.use('/api/cart',     cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/licenses', licenseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users',    userRoutes);
 
-/* -------------------------------------------------- */
-/*  Startup                                           */
-/* -------------------------------------------------- */
-
+// 🚀 listen on Cloud Run port
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () =>
   console.log(`🚀 Backend running on port ${PORT}`)
