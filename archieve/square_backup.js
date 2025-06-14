@@ -1,15 +1,36 @@
 // server/checkout.js
 const express = require('express');
 const router  = express.Router();
-const { SquareClient } = require('square');
+
+const { SquareClient, SquareEnvironment, ApiError } = require('square');
 const crypto = require('crypto');
+
+// Determine mode (expects "test" or "live")
+const mode = process.env.SQUARE_MODE === 'test' ? 'test' : 'live';
+console.log('[Checkout.js] Running in', mode, 'mode');
+
+// Select the appropriate token
+const accessToken = mode === 'test'
+  ? process.env.SQUARE_ACCESS_TEST_TOKEN
+  : process.env.SQUARE_ACCESS_LIVE_TOKEN;
+console.log('[Checkout.js] Using access token:', accessToken);
 
 // Initialize Square client
 const squareClient = new SquareClient({
-  token: process.env.SQUARE_ACCESS_TOKEN
+  token:       accessToken,
+  environment: mode === 'test'
+    ? SquareEnvironment.Sandbox
+    : SquareEnvironment.Production,
 });
 
+// Sanity‐check that ApiError is imported and payments API exists
+console.log('⚙️  ApiError is', typeof ApiError);
+console.log('⚙️  payments.createPayment →', typeof squareClient.payments.createPayment);
+
 router.post('/process-payment', async (req, res) => {
+  console.log('[Checkout.js] /process-payment called');
+  console.log('[Checkout.js] Request body:', req.body);
+
   const { items, nonce } = req.body;
 
   // Calculate total amount in cents
@@ -17,22 +38,27 @@ router.post('/process-payment', async (req, res) => {
   const idempotencyKey = crypto.randomUUID();
 
   try {
-    const response = await squareClient.payments.create({
-      sourceId: nonce,
+    console.log('[Checkout.js] Calling Square createPayment...');
+    const { result } = await squareClient.payments.createPayment({
+      sourceId:       nonce,
       idempotencyKey,
       amountMoney: {
-        amount: BigInt(Math.round(totalCents)),
-        currency: 'USD'
-      }
+        amount:   BigInt(Math.round(totalCents)),
+        currency: 'USD',
+      },
     });
+    console.log('[Checkout.js] Square response:', result);
 
-    res.status(200).json({ payment: response.payment });
-  } catch (err) {
-    console.error('Square payment error:', err);
-    const message = err instanceof Error
-      ? err.message
-      : 'Internal server error';
-    res.status(500).json({ message });
+    res.status(200).json({ payment: result.payment });
+  } catch (error) {
+    // Now that ApiError is imported properly, this won't blow up
+    if (error instanceof ApiError) {
+      console.error('[Checkout.js] Square API error:', error.result);
+      return res.status(400).json({ errors: error.result });
+    }
+
+    console.error('[Checkout.js] Unexpected error:', error);
+    res.status(500).json({ message: 'Internal server error', detail: error.message });
   }
 });
 
