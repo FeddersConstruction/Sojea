@@ -1,52 +1,52 @@
+// server/checkout.js
 const express = require('express');
 const router  = express.Router();
 
-const { Client, Environment, ApiError } = require('square');
+const { SquareClient, SquareEnvironment, ApiError } = require('square');
 const crypto = require('crypto');
 
-const mode = process.env.SQUARE_MODE === 'test' ? 'test' : 'live';
-console.log('[Checkout.js] Running in', mode, 'mode');
+console.log('[Checkout.js] Running in test mode (sandbox)');
 
-const accessToken = mode === 'test'
-  ? process.env.SQUARE_ACCESS_TEST_TOKEN
-  : process.env.SQUARE_ACCESS_LIVE_TOKEN;
+// Use only the test token from environment
+const accessToken = process.env.SQUARE_ACCESS_TEST_TOKEN;
+console.log('[Checkout.js] Using access token:', accessToken);
 
-console.log('[Checkout.js] Using access token:', accessToken ? '[SET]' : '[NOT SET – MISSING ENV VAR]');
-
-const squareClient = new Client({
-  environment: mode === 'test' ? Environment.Sandbox : Environment.Production,
-  accessToken,
+// Initialize Square client with sandbox environment
+const squareClient = new SquareClient({
+  token:       accessToken,
+  environment: SquareEnvironment.Sandbox,
 });
 
+// Sanity check
 console.log('⚙️  ApiError is', typeof ApiError);
-console.log('⚙️  squareClient.paymentsApi.createPayment →', typeof squareClient.paymentsApi.createPayment);
+console.log('⚙️  payments.createPayment →', typeof squareClient.payments.createPayment);
 
 router.post('/process-payment', async (req, res) => {
-  console.log('[Checkout.js] /process-payment called', req.body);
-  const { nonce } = req.body;
+  console.log('[Checkout.js] /process-payment called');
+  console.log('[Checkout.js] Request body:', req.body);
 
-  if (!nonce) return res.status(400).json({ message: 'Missing required nonce.' });
+  const { items, nonce } = req.body;
 
+  const totalCents = items.reduce((sum, i) => sum + i.price * i.quantity, 0) * 100;
   const idempotencyKey = crypto.randomUUID();
 
   try {
-    console.log('[Checkout.js] Creating payment with Square...');
-    const { result } = await squareClient.paymentsApi.createPayment({
-      sourceId: nonce,
+    console.log('[Checkout.js] Calling Square createPayment...');
+    const { result } = await squareClient.payments.createPayment({
+      sourceId:       nonce,
       idempotencyKey,
       amountMoney: {
-        amount: BigInt(100),
+        amount:   BigInt(Math.round(totalCents)),
         currency: 'USD',
       },
     });
+    console.log('[Checkout.js] Square response:', result);
 
-    console.log('[Checkout.js] Payment successful:', result);
     res.status(200).json({ payment: result.payment });
-
   } catch (error) {
     if (error instanceof ApiError) {
-      console.error('[Checkout.js] Square API error:', error.errors);
-      return res.status(400).json({ errors: error.errors });
+      console.error('[Checkout.js] Square API error:', error.result);
+      return res.status(400).json({ errors: error.result });
     }
 
     console.error('[Checkout.js] Unexpected error:', error);
