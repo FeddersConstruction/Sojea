@@ -1,51 +1,41 @@
 const express = require('express');
 const router  = express.Router();
 
-const { Client, Environment, ApiError } = require('@square/square');
+const { Client, Environment, ApiError } = require('square');
 const crypto = require('crypto');
 
-// Determine mode: 'test' or 'live' (defaults to 'live' if not set)
 const mode = process.env.SQUARE_MODE === 'test' ? 'test' : 'live';
 console.log('[Checkout.js] Running in', mode, 'mode');
 
-// Choose access token based on mode
 const accessToken = mode === 'test'
   ? process.env.SQUARE_ACCESS_TEST_TOKEN
   : process.env.SQUARE_ACCESS_LIVE_TOKEN;
 
 console.log('[Checkout.js] Using access token:', accessToken ? '[SET]' : '[NOT SET – MISSING ENV VAR]');
 
-// Initialize Square client
 const squareClient = new Client({
-  accessToken,
   environment: mode === 'test' ? Environment.Sandbox : Environment.Production,
+  accessToken,
 });
 
-// Confirm API availability
 console.log('⚙️  ApiError is', typeof ApiError);
 console.log('⚙️  squareClient.paymentsApi.createPayment →', typeof squareClient.paymentsApi.createPayment);
 
-// Main endpoint for processing payment
 router.post('/process-payment', async (req, res) => {
-  console.log('[Checkout.js] /process-payment called');
-  console.log('[Checkout.js] Request body:', req.body);
-
+  console.log('[Checkout.js] /process-payment called', req.body);
   const { nonce } = req.body;
 
-  if (!nonce) {
-    return res.status(400).json({ message: 'Missing required nonce field in request body.' });
-  }
+  if (!nonce) return res.status(400).json({ message: 'Missing required nonce.' });
 
-  const idempotencyKey = crypto.randomUUID(); // ensures no double charges
+  const idempotencyKey = crypto.randomUUID();
 
   try {
     console.log('[Checkout.js] Creating payment with Square...');
-
     const { result } = await squareClient.paymentsApi.createPayment({
       sourceId: nonce,
       idempotencyKey,
       amountMoney: {
-        amount: BigInt(100), // Hardcoded $1.00 in cents
+        amount: BigInt(100),
         currency: 'USD',
       },
     });
@@ -55,8 +45,8 @@ router.post('/process-payment', async (req, res) => {
 
   } catch (error) {
     if (error instanceof ApiError) {
-      console.error('[Checkout.js] Square API error:', error.result);
-      return res.status(400).json({ errors: error.result });
+      console.error('[Checkout.js] Square API error:', error.errors);
+      return res.status(400).json({ errors: error.errors });
     }
 
     console.error('[Checkout.js] Unexpected error:', error);
