@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 
-const { Client: SquareClient, Environment: SquareEnvironment, ApiError } = require('square');
+const { Client, Environment, ApiError } = require('@square/square');
 const crypto = require('crypto');
 
 // Determine mode: 'test' or 'live' (defaults to 'live' if not set)
@@ -16,14 +16,14 @@ const accessToken = mode === 'test'
 console.log('[Checkout.js] Using access token:', accessToken ? '[SET]' : '[NOT SET – MISSING ENV VAR]');
 
 // Initialize Square client
-const squareClient = new SquareClient({
+const squareClient = new Client({
   accessToken,
-  environment: mode === 'test' ? SquareEnvironment.Sandbox : SquareEnvironment.Production,
+  environment: mode === 'test' ? Environment.Sandbox : Environment.Production,
 });
 
 // Confirm API availability
 console.log('⚙️  ApiError is', typeof ApiError);
-console.log('⚙️  squareClient.payments.createPayment →', typeof squareClient.payments.createPayment);
+console.log('⚙️  squareClient.paymentsApi.createPayment →', typeof squareClient.paymentsApi.createPayment);
 
 // Main endpoint for processing payment
 router.post('/process-payment', async (req, res) => {
