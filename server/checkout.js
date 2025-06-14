@@ -1,6 +1,6 @@
 // server/checkout.js
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 
 const { SquareClient, SquareEnvironment, ApiError } = require('square');
 const crypto = require('crypto');
@@ -23,7 +23,8 @@ const squareClient = new SquareClient({
     : SquareEnvironment.Production,
 });
 
-// Sanity-check that the payments API is available
+// Sanity‐check that ApiError is imported and payments API exists
+console.log('⚙️  ApiError is', typeof ApiError);
 console.log('⚙️  payments.createPayment →', typeof squareClient.payments.createPayment);
 
 router.post('/process-payment', async (req, res) => {
@@ -31,20 +32,12 @@ router.post('/process-payment', async (req, res) => {
   console.log('[Checkout.js] Request body:', req.body);
 
   const { items, nonce } = req.body;
-  console.log('[Checkout.js] Parsed items:', items);
-  console.log('[Checkout.js] Parsed nonce:', nonce);
 
   // Calculate total amount in cents
-  const totalCents = items
-    .reduce((sum, i) => sum + i.price * i.quantity, 0) * 100;
-  console.log('[Checkout.js] Calculated totalCents:', totalCents);
-
-  // Generate idempotency key
+  const totalCents = items.reduce((sum, i) => sum + i.price * i.quantity, 0) * 100;
   const idempotencyKey = crypto.randomUUID();
-  console.log('[Checkout.js] Generated idempotencyKey:', idempotencyKey);
 
   try {
-    // Create the payment
     console.log('[Checkout.js] Calling Square createPayment...');
     const { result } = await squareClient.payments.createPayment({
       sourceId:       nonce,
@@ -56,18 +49,16 @@ router.post('/process-payment', async (req, res) => {
     });
     console.log('[Checkout.js] Square response:', result);
 
-    // On success, return the payment object
     res.status(200).json({ payment: result.payment });
   } catch (error) {
+    // Now that ApiError is imported properly, this won't blow up
     if (error instanceof ApiError) {
-      // Handle Square API errors
       console.error('[Checkout.js] Square API error:', error.result);
-      res.status(400).json({ errors: error.result });
-    } else {
-      // Handle unexpected errors
-      console.error('[Checkout.js] Unexpected error:', error);
-      res.status(500).json({ message: 'Internal server error', detail: error.message });
+      return res.status(400).json({ errors: error.result });
     }
+
+    console.error('[Checkout.js] Unexpected error:', error);
+    res.status(500).json({ message: 'Internal server error', detail: error.message });
   }
 });
 
