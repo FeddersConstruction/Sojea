@@ -20,7 +20,7 @@ router.post('/process-payment', async (req, res) => {
 
   try {
     console.log('[Checkout.js] Calling Square createPayment...');
-    const { result } = await squareClient.payments.createPayment({
+    const { result } = await squareClient.payments.create({
       amountMoney: {
         amount: BigInt("100"),
         currency: 'USD',
