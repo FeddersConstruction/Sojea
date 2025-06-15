@@ -12,7 +12,7 @@ console.log('[Checkout.js] Using access token:', accessToken);
 router.post('/process-payment', async (req, res) => {
   const { sourceId } = req.body;
   const client = new SquareClient({
-    environment: SquareEnvironment.Sandbox,
+    environment: SquareEnvironment.Production,
     token: accessToken,
   });
 
