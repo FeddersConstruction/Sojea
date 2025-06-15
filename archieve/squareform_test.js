@@ -6,8 +6,8 @@ export default function SquareForm() {
   const [status, setStatus] = useState('');  // For displaying payment status messages
 
   // ✅ Square sandbox credentials
-  const applicationId = 'sq0idp-RsIaXDcpZMkSJN1s7xKT6g';
-  const locationId    = 'L089JN7J44VK6';
+  const applicationId = 'sandbox-sq0idb-n5RoAfVLRwaiPBzgJ3guFw';
+  const locationId    = 'LA6VHX7XNJCD6';
 
   // Handles the response from tokenization
   const cardTokenizeResponseReceived = async (tokenResult, verifiedBuyer) => {

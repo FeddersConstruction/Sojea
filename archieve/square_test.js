@@ -6,7 +6,7 @@ const { SquareClient, SquareEnvironment } = require('square');
 
 console.log('[Checkout.js] Running in test mode (sandbox)');
 
-const accessToken = process.env.SQUARE_ACCESS_LIVE_TOKEN;
+const accessToken = process.env.SQUARE_ACCESS_TEST_TOKEN;
 console.log('[Checkout.js] Using access token:', accessToken);
 
 router.post('/process-payment', async (req, res) => {
