@@ -21,16 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Build with Jekyll or Your Tool
+      - uses: actions/configure-pages@v4
+      - name: Build static site
         run: |
           mkdir dist
-          echo "<h1>Hello World</h1>" > dist/index.html
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+          echo "<h1>Hello Updated World</h1>" > dist/index.html
+      - uses: actions/upload-pages-artifact@v2
         with:
           path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
