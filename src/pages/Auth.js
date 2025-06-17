@@ -11,7 +11,7 @@ export default function Auth() {
   const navigate = useNavigate()
   const API = process.env.REACT_APP_API_BASE_URL
 
-  // If already logged in, redirect away from /auth
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'))
     if (user) {
