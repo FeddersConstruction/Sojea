@@ -1,0 +1,75 @@
+
+
+.about-container {
+  display: flex;
+  width: 100%;       /* use 100% instead of 100vw */
+  height: 100vh;
+  background: #ffe9cf;
+  color: #ff9233;
+}
+
+/* ————————————————————————— */
+/* Landscape: two 50% columns, full-height */
+/* ————————————————————————— */
+@media (orientation: landscape) {
+  .about-container {
+    flex-direction: row;
+  }
+  .about-text,
+  .about-image {
+    flex: 0 0 50%;    /* exactly half of the container’s width */
+    height: 100vh;
+  }
+}
+
+/* ————————————————————————— */
+/* Portrait: stacked blocks, half-height */
+/* ————————————————————————— */
+@media (orientation: portrait) {
+  .about-container {
+    flex-direction: column;
+  }
+  .about-text,
+  .about-image {
+    width: 100%;
+    flex: 0 0 50vh;   /* each takes half the viewport height */
+  }
+  /* (Optional) bump up text size on narrow screens */
+  .about-text h2 { font-size: 7vw; }
+  .about-text p  { font-size: 4.5vw; }
+}
+
+/* ————————————————————————— */
+/* Text area styling */
+/* ————————————————————————— */
+.about-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4vh 4vw;
+}
+.about-text h2 {
+  font-size: 5vw;
+  margin-bottom: 2vh;
+}
+.about-text p {
+  font-size: 3.5vw;
+  line-height: 1.4;
+}
+
+/* ————————————————————————— */
+/* Image area styling */
+/* ————————————————————————— */
+.about-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}

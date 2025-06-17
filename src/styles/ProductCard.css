@@ -1,0 +1,143 @@
+/* src/styles/ProductCard.css */
+
+.product-card {
+  background: #ffda79;
+  border: 0.3vw solid #ff9233;
+  border-radius: 1.5vh;
+  padding: 1.5vh 1.5vw;
+  box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 1.5vh;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-0.5vh);
+  box-shadow: 0 1vh 2vh rgba(0,0,0,0.15);
+}
+
+.product-image {
+  width: 80%;
+  border-radius: 1vh;
+  object-fit: cover;
+}
+
+/* Wrap info + actions side by side */
+.product-main {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2vw;
+}
+
+.product-info {
+  text-align: left;
+}
+
+.product-name {
+  font-size: 1vw;
+  color: #009039;
+  margin: 0;
+}
+
+.product-price {
+  font-size: 3vw;
+  color: #ff9233;
+  font-weight: bold;
+  margin: 0.5vh 0 0;
+}
+
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vh;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.quantity-button {
+  background: #ffffff;
+  color: #ff9233;
+  border: 0.3vh solid #ff9233;
+  border-radius: 50%;
+  width: 4vh;
+  height: 4vh;
+  font-size: 2.5vh;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.quantity-button:hover {
+  background: #ff9233;
+  color: #ffffff;
+}
+
+.quantity-value {
+  font-size: 2.5vh;
+  width: 3vh;
+  text-align: center;
+}
+
+.add-button {
+  padding: 1.5vh 2vw;
+  font-size: 2.5vh;
+  background: #ff9233;
+  color: white;
+  border: none;
+  border-radius: 1vh;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-button:hover {
+  background: #d06b00;
+}
+
+.added-message {
+  position: absolute;
+  bottom: 2vh;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 0.5vh 1vw;
+  border-radius: 1vh;
+  font-size: 2vh;
+  animation: fadeout 2s forwards;
+}
+
+@keyframes fadeout {
+  0%   { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Portrait */
+@media (orientation: portrait) {
+  .product-card {
+    padding: 2vh 2vw;
+  }
+  .product-name,
+  .product-price {
+    font-size: 4vw;
+  }
+}
+
+/* Landscape */
+@media (orientation: landscape) {
+  .product-card {
+    padding: 1vh 1.5vw;
+  }
+  .product-name,
+  .product-price {
+    font-size: 2vw;
+  }
+}

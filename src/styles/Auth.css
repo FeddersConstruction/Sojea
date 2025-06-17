@@ -1,0 +1,89 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #66b7fb;
+  width: 100vw;
+  height: 100vh;
+  padding: 2vh 2vw;
+  box-sizing: border-box;
+}
+
+/* Inner auth card */
+ .auth-form-wrapper {
+  width: 80vw;
+  max-width: 500px;
+  min-height: 60vh;
+  background-color: #ffe9cf;
+  border: 0.4vw solid #009039;  /* green border frame */
+  border-radius: 2vw;
+  box-shadow: 0 1vh 2vh rgba(0,0,0,0.1);
+  padding: 3vh 3vw;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Toggle buttons at top of card */
+.auth-toggle {
+  display: flex;
+  width: 100%;
+  margin-bottom: 3vh;
+}
+
+.auth-toggle button {
+  flex: 1;
+  padding: 2vh 0;
+  font-size: 2.5vh;
+  background: #ff9233;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.auth-toggle button:first-child {
+  border-top-left-radius: 1.5vw;
+  border-bottom-left-radius: 1.5vw;
+}
+
+.auth-toggle button:last-child {
+  border-top-right-radius: 1.5vw;
+  border-bottom-right-radius: 1.5vw;
+}
+
+.auth-toggle button:hover {
+  background: #d06b00;
+}
+
+.auth-toggle .active {
+  background: #009039;
+}
+
+/* Portrait overrides */
+@media (orientation: portrait) {
+  .auth-form-wrapper {
+    width: 90vw;
+    max-width: 450px;
+    min-height: 65vh;
+    padding: 4vh 4vw;
+  }
+  .auth-toggle button {
+    font-size: 3vh;
+    padding: 2.5vh 0;
+  }
+}
+
+/* Landscape overrides */
+@media (orientation: landscape) {
+  .auth-form-wrapper {
+    width: 60vw;
+    max-width: 550px;
+    min-height: 55vh;
+    padding: 3vh 5vw;
+  }
+  .auth-toggle button {
+    font-size: 2.5vh;
+    padding: 1.5vh 0;
+  }
+}

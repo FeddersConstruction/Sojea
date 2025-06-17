@@ -1,0 +1,71 @@
+.container {
+  min-height: 100vh;
+  background-color: #ffda79;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Inner card */
+.wrapper {
+  width: 90vw;
+  max-width: 600px;
+  background: #ffe9cf;
+  border-radius: 1.5vw;
+  box-shadow: 0 1vh 2vh rgba(0,0,0,0.1);
+  padding: 3vh 3vw;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Checkout title */
+.wrapper .checkout-title {
+  font-weight: bolder;
+  font-size: 2.5rem;
+  margin-bottom: 4vh;
+  color: #009039;
+}
+
+/* Any other paragraphs inside card */
+.wrapper p:not(.checkout-title) {
+  font-size: 2vh;
+  color: #009039;
+  margin-bottom: 4vh;
+}
+
+/* Square payment form container */
+.wrapper #card-container {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 3vh;
+}
+
+/* Portrait (taller) */
+@media (orientation: portrait) {
+  .wrapper {
+    width: 95vw;
+    padding: 4vh 4vw;
+  }
+  .wrapper .checkout-title {
+    font-size: 8vh;
+  }
+  .wrapper p:not(.checkout-title) {
+    font-size: 5vh;
+  }
+}
+
+/* Landscape (wider) */
+@media (orientation: landscape) {
+  .wrapper {
+    width: 70vw;
+    padding: 3vh 5vw;
+  }
+  .wrapper .checkout-title {
+    font-size: 10vh;
+  }
+  .wrapper p:not(.checkout-title) {
+    font-size: 4vh;
+  }
+}
