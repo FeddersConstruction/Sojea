@@ -6,7 +6,7 @@ import Login from '../components/Login'
 import Signup from '../components/Signup'
 
 export default function Auth() {
-  const [mode, setMode] = useState('login')        // 'login' or 'signup'
+  const [mode, setMode] = useState('login')
   const [error, setError] = useState(null)
   const navigate = useNavigate()
   const API = process.env.REACT_APP_API_BASE_URL
