@@ -1,4 +1,4 @@
-// src/pages/Auth.js
+// src/pages/Auth.js good
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Auth.css'
