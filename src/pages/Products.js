@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import '../styles/Products.css';
+import Navbar  from '../components/Navbar';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -31,7 +32,9 @@ export default function Products() {
   if (error)   return <p className="products-error">{error}</p>;
 
   return (
-    <section className="products-page">
+    <>
+      <Navbar />
+      <section className="products-page">
       <h2 className="products-title">Our Products</h2>
       <div className="products-grid">
         {products.map(prod => {
@@ -48,5 +51,6 @@ export default function Products() {
         })}
       </div>
     </section>
+  </>
   );
 }

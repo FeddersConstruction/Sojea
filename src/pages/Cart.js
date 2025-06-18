@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
+import Navbar  from '../components/Navbar';
 
 export default function Cart() {
   const [items, setItems] = useState([]);

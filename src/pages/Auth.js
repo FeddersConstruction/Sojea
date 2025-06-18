@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/Auth.css'
 import Login from '../components/Login'
 import Signup from '../components/Signup'
+import Navbar  from '../components/Navbar';
 
 export default function Auth() {
   const [mode, setMode] = useState('login')

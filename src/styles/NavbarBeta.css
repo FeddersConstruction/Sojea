@@ -1,0 +1,138 @@
+/* src/styles/Navbar.css */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2vh 4vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #009039;
+  color: #ffe9cf;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.nav-item {
+  font-weight: bold;
+  color: #ffe9cf;
+  text-decoration: none;
+}
+
+.nav-item:last-child {
+  margin-right: 0;
+}
+
+.nav-menu-icon {
+  display: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 5vw;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Both the link-icons and the logout button share these exact rules */
+.nav-icon,
+.nav-logout {
+  display: inline-flex;
+  align-items: center;
+  font-size: 5vw;
+  color: inherit;
+  text-decoration: none;
+  margin-left: 4vw;
+  position: relative;
+  background: none;      /* so button has no default BG */
+  border: none;           /* so button has no default border */
+  cursor: pointer;        /* match link cursor */
+  padding: 0;             /* remove default button padding */
+}
+
+.nav-text {
+  display: none;
+  margin-left: 1vw;
+  font-size: 3.5vw;
+  color: inherit;
+}
+
+/* Hover for both link-icons and logout button */
+.nav-item:hover,
+.nav-icon:hover,
+.nav-logout:hover {
+  color: #f7901e;
+}
+
+/* Portrait: show hamburger, full-width dropdown */
+@media (orientation: portrait) {
+  .nav-menu-icon {
+    display: inline-flex;
+  }
+  .nav-right {
+    display: none;
+  }
+  .nav-right.open {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: #329b3e;
+    z-index: 1001;
+  }
+  .nav-icon,
+  .nav-logout {
+    margin: 2vh 0;
+    font-size: 8vw;
+    justify-content: center;
+    width: 100%;
+  }
+  .nav-icon svg,
+  .nav-logout svg {
+    visibility: hidden;
+  }
+  .nav-text {
+    display: inline;
+    font-size: 5.5vw;
+  }
+  .nav-item {
+    font-size: 5vw;
+    margin-right: 4vw;
+  }
+}
+
+/* Landscape: inline icons, hide hamburger/dropdown */
+@media (orientation: landscape) {
+  .nav-menu-icon {
+    display: none;
+    font-size: 6vw;
+  }
+  .nav-right {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+  }
+  .nav-icon svg,
+  .nav-logout svg {
+    font-size: 4vw;
+    visibility: visible;
+  }
+  .nav-text {
+    display: none;
+  }
+  .nav-item {
+    font-size: 2.5vw;
+    margin-right: 4vw;
+  }
+}
