@@ -61,7 +61,7 @@ router.post('/process-payment', async (req, res) => {
 
     // 3. Send to Square
     const client   = new SquareClient({
-      environment: SquareEnvironment.Production,
+      environment: SquareEnvironment.Sandbox,
       token: accessToken,
     });
     const response = await client.payments.create({
