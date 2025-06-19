@@ -1,26 +1,25 @@
 // src/pages/Checkout.js
 
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate }        from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Checkout.css';
-import SquareForm                           from '../components/SquareForm';
+import SquareForm from '../components/SquareForm';
 
 export function CheckedOut() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
+  const API = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    // If there's no payment info, kick back to home immediately
     if (!state || !state.address || !state.userId) {
-      navigate('/');
-      return;
+      return navigate('/');
     }
 
     async function finalize() {
       try {
-        // 1) send confirmation email
-        await fetch('/checkout/send-email', {
+        console.log('[CheckedOut] sending email...');
+        await fetch(`${API}/api/checkout/send-email`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({
@@ -30,8 +29,8 @@ export function CheckedOut() {
           })
         });
 
-        // 2) clear out the cart
-        await fetch(`/cart/${state.userId}`, {
+        console.log('[CheckedOut] clearing cart...');
+        await fetch(`${API}/api/cart/${state.userId}`, {
           method: 'DELETE'
         });
       } catch (err) {
@@ -42,7 +41,7 @@ export function CheckedOut() {
     }
 
     finalize();
-  }, [state, navigate]);
+  }, [state, navigate, API]);
 
   if (!done) {
     return <p className="checkout-loading">Finalizing your order…</p>;
@@ -63,8 +62,8 @@ export default function Checkout() {
   const { state }    = useLocation();
   const navigate     = useNavigate();
   const [address, setAddress] = useState('');
+  const API = process.env.REACT_APP_API_BASE_URL;
 
-  // redirect to cart if missing any required state
   useEffect(() => {
     if (!state || state.totalPrice == null || !state.userId) {
       navigate('/cart');
