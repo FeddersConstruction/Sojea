@@ -1,8 +1,12 @@
 // server/cart.js
 
 const express = require('express');
+const cors    = require('cors');
 const { Storage } = require('@google-cloud/storage');
-const router = express.Router();
+const router  = express.Router();
+
+// allow CORS preflights & cross‐origin calls if needed
+router.use(cors());
 
 const storage      = new Storage();
 const bucketName   = 'sojea';
@@ -37,7 +41,7 @@ router.get('/:userId', async (req, res) => {
       return res.status(401).json({ message: 'User not authorized' });
     }
     const allCarts = await readJSON(cartFilePath, {});
-    const items = allCarts[uid] || [];
+    const items    = allCarts[uid] || [];
 
     const totalQuantity = items.reduce((sum, i) => sum + i.quantity, 0);
     const totalPrice    = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
@@ -121,11 +125,9 @@ router.delete('/:userId', async (req, res) => {
     if (!users.some(u => u.id === uid)) {
       return res.status(401).json({ message: 'User not authorized' });
     }
-
     const allCarts = await readJSON(cartFilePath, {});
     allCarts[uid]  = [];
     await writeJSON(cartFilePath, allCarts);
-
     res.json({ items: [], totalQuantity: 0, totalPrice: 0 });
   } catch (err) {
     console.error('[cart-clear] error:', err);

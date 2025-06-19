@@ -11,7 +11,7 @@ export function CheckedOut() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    // If we didn’t just come from a successful checkout, redirect home
+    // If there's no payment info, kick back to home immediately
     if (!state || !state.address || !state.userId) {
       navigate('/');
       return;
@@ -20,18 +20,18 @@ export function CheckedOut() {
     async function finalize() {
       try {
         // 1) send confirmation email
-        await fetch('/api/checkout/send-email', {
+        await fetch('/checkout/send-email', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+          body:    JSON.stringify({
             userId:    state.userId,
             userEmail: state.userEmail,
             address:   state.address
           })
         });
 
-        // 2) clear the cart
-        await fetch(`/api/cart/${state.userId}`, {
+        // 2) clear out the cart
+        await fetch(`/cart/${state.userId}`, {
           method: 'DELETE'
         });
       } catch (err) {
@@ -64,7 +64,7 @@ export default function Checkout() {
   const navigate     = useNavigate();
   const [address, setAddress] = useState('');
 
-  // redirect to cart if missing checkout data
+  // redirect to cart if missing any required state
   useEffect(() => {
     if (!state || state.totalPrice == null || !state.userId) {
       navigate('/cart');
@@ -72,7 +72,7 @@ export default function Checkout() {
   }, [state, navigate]);
 
   const { totalQuantity = 0, totalPrice = 0, userId } = state || {};
-  const user    = JSON.parse(localStorage.getItem('user') || '{}');
+  const user      = JSON.parse(localStorage.getItem('user') || '{}');
   const userEmail = user.email;
 
   const handleSuccess = () => {

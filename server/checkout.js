@@ -24,6 +24,8 @@ const storage      = new Storage();
 const bucketName   = 'sojea';
 const cartFilePath = 'json/cart.json';
 
+router.use(cors());
+
 async function ensureFileExists(path, defaultData) {
   const file   = storage.bucket(bucketName).file(path);
   const [ok]   = await file.exists();
