@@ -1,32 +1,51 @@
 // src/pages/Checkout.js
 
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate }        from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Checkout.css';
-import SquareForm                           from '../components/SquareForm';
+import SquareForm from '../components/SquareForm';
 
 export function CheckedOut() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (!state || !state.address) {
-      return navigate('/cart');
+    if (!state || !state.address || !state.userId) {
+      return navigate('/');
     }
 
-    // fire-and-forget the email
-    fetch('/api/checkout/send-email', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        userId:  state.userId,
-        address: state.address
-      })
-    })
-    .then(r => r.json())
-    .then(console.log)
-    .catch(console.error);
+    async function finalize() {
+      try {
+        // 1) send email
+        await fetch('/api/checkout/send-email', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            userId:    state.userId,
+            userEmail: state.userEmail,
+            address:   state.address
+          })
+        });
+
+        // 2) clear cart
+        await fetch(`/api/cart/${state.userId}`, {
+          method: 'DELETE'
+        });
+
+      } catch (err) {
+        console.error('[CheckedOut] finalize error:', err);
+      } finally {
+        setDone(true);
+      }
+    }
+
+    finalize();
   }, [state, navigate]);
+
+  if (!done) {
+    return <p className="checkout-loading">Finalizing your order…</p>;
+  }
 
   return (
     <div className="container">
@@ -40,8 +59,8 @@ export function CheckedOut() {
 }
 
 export default function Checkout() {
-  const { state } = useLocation();
-  const navigate = useNavigate();
+  const { state }    = useLocation();
+  const navigate     = useNavigate();
   const [address, setAddress] = useState('');
 
   useEffect(() => {
@@ -51,10 +70,12 @@ export default function Checkout() {
   }, [state, navigate]);
 
   const { totalQuantity = 0, totalPrice = 0, userId } = state || {};
+  const user    = JSON.parse(localStorage.getItem('user') || '{}');
+  const userEmail = user.email;
 
   const handleSuccess = () => {
     navigate('/checkedout', {
-      state: { address, totalQuantity, totalPrice, userId }
+      state: { address, totalQuantity, totalPrice, userId, userEmail }
     });
   };
 

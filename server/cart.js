@@ -1,4 +1,5 @@
 // server/cart.js
+
 const express = require('express');
 const { Storage } = require('@google-cloud/storage');
 const router = express.Router();
@@ -108,6 +109,26 @@ router.delete('/:userId/item/:productId', async (req, res) => {
     res.json({ items: userCart, totalQuantity, totalPrice });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// NEW: DELETE entire cart
+router.delete('/:userId', async (req, res) => {
+  const uid = parseInt(req.params.userId, 10);
+  try {
+    const users = await readJSON(usersPath, []);
+    if (!users.some(u => u.id === uid)) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    const allCarts = await readJSON(cartFilePath, {});
+    allCarts[uid]  = [];
+    await writeJSON(cartFilePath, allCarts);
+
+    res.json({ items: [], totalQuantity: 0, totalPrice: 0 });
+  } catch (err) {
+    console.error('[cart-clear] error:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
