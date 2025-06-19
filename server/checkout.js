@@ -8,7 +8,7 @@ const { SquareClient, SquareEnvironment } = require('square');
 const { Storage } = require('@google-cloud/storage');
 
 console.log('[Checkout.js] Running in test mode (sandbox)');
-const accessToken = process.env.SQUARE_ACCESS_LIVE_TOKEN;
+const accessToken = process.env.SQUARE_ACCESS_TEST_TOKEN;
 console.log('[Checkout.js] Using access token:', accessToken);
 
 // initialize SendGrid
@@ -17,7 +17,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const storage      = new Storage();
 const bucketName   = 'sojea';
 const cartFilePath = 'json/cart.json';
-const usersPath    = 'json/users.json';
 
 async function ensureFileExists(path, defaultData) {
   const file = storage.bucket(bucketName).file(path);
@@ -34,28 +33,33 @@ async function readJSON(path, defaultData) {
 }
 
 router.post('/process-payment', async (req, res) => {
+  console.log('[process-payment] incoming body:', req.body);
   const { sourceId, userId, address } = req.body;
 
+  if (!sourceId) {
+    console.warn('[process-payment] Missing sourceId');
+    return res.status(400).json({ error: 'Missing sourceId in request body' });
+  }
   if (!userId) {
+    console.warn('[process-payment] Missing userId');
     return res.status(400).json({ error: 'Missing userId in request body' });
   }
 
   try {
-    // 1. Verify user
-    const users = await readJSON(usersPath, []);
-    if (!users.some(u => u.id === parseInt(userId, 10))) {
-      return res.status(401).json({ error: 'User not authorized' });
-    }
-
-    // 2. Load their cart and compute total
+    // 1. Load their cart and compute total
+    console.log(`[process-payment] Loading cart for userId=${userId}`);
     const allCarts   = await readJSON(cartFilePath, {});
     const items      = allCarts[userId] || [];
+    console.log('[process-payment] Cart items:', items);
+
     const totalPrice = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    console.log('[process-payment] Computed totalPrice:', totalPrice);
 
-    // 3. Convert to cents and BigInt
+    // 2. Convert to cents and BigInt
     const amount = BigInt(Math.round(totalPrice * 100));
+    console.log('[process-payment] Charging amount (cents):', amount.toString());
 
-    // 4. Send to Square
+    // 3. Send to Square
     const client   = new SquareClient({
       environment: SquareEnvironment.Production,
       token: accessToken,
@@ -65,16 +69,13 @@ router.post('/process-payment', async (req, res) => {
       idempotencyKey: crypto.randomUUID(),
       amountMoney: { amount, currency: 'USD' },
     });
+    console.log('[process-payment] Square payment result:', response);
 
-    console.log('Square payment result:', response);
-
-    // 5. Send order email via SendGrid
-    const itemLines = items
-      .map(i => `• ${i.name} × ${i.quantity}`)
-      .join('\n');
+    // 4. Send order email via SendGrid
+    const itemLines = items.map(i => `• ${i.name} × ${i.quantity}`).join('\n');
     const msg = {
-      to:   'garrett.strange@yahoo.com',
-      from: 'garrett.strange10@gmail.com',
+      to:      'garrett.strange@yahoo.com',
+      from:    'orders@sojea.com',
       subject: `New Order from User ${userId}`,
       text: `
 Shipping Address:
@@ -86,9 +87,11 @@ ${itemLines}
 Total: $${totalPrice.toFixed(2)}
       `.trim(),
     };
+    console.log('[process-payment] Sending email with:', msg);
     await sgMail.send(msg);
+    console.log('[process-payment] Email sent');
 
-    // 6. Serialize BigInts as strings and return
+    // 5. Serialize BigInts as strings and return
     const safe = JSON.parse(
       JSON.stringify(response, (_, v) =>
         typeof v === 'bigint' ? v.toString() : v
@@ -97,7 +100,7 @@ Total: $${totalPrice.toFixed(2)}
     res.status(200).json(safe);
 
   } catch (err) {
-    console.error('Payment/email error:', err);
+    console.error('[process-payment] Payment/email error:', err);
     res.status(500).json({ error: err.message, details: err.body });
   }
 });
