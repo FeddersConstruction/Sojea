@@ -67,8 +67,8 @@ router.post('/process-payment', async (req, res) => {
     const amount     = BigInt(Math.round(totalPrice * 100));
 
     const client   = new SquareClient({
-      environment: SquareEnvironment.Sandbox,
-      token: process.env.SQUARE_ACCESS_TEST_TOKEN,
+      environment: SquareEnvironment.Production,
+      token: process.env.SQUARE_ACCESS_LIVE_TOKEN,
     });
     const response = await client.payments.create({
       sourceId,

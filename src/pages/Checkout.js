@@ -21,7 +21,15 @@ export function CheckedOut() {
 
   useEffect(() => {
     if (!state || !state.address || !state.userId || !state.deliveryTime) {
-      return navigate('/');
+      navigate('/');
+      return;
+    }
+
+    const storageKey = `order_sent_${state.userId}`;
+    if (localStorage.getItem(storageKey)) {
+      // Already sent; skip re-sending
+      setDone(true);
+      return;
     }
 
     async function finalize() {
@@ -38,6 +46,9 @@ export function CheckedOut() {
         });
 
         await fetch(`${API}/api/cart/${state.userId}`, { method: 'DELETE' });
+
+        // Mark as sent so we don't double-send
+        localStorage.setItem(storageKey, 'true');
       } catch (err) {
         console.error('[CheckedOut] finalize error:', err);
       } finally {
@@ -66,9 +77,9 @@ export function CheckedOut() {
 }
 
 export default function Checkout() {
-  const { state }    = useLocation();
-  const navigate     = useNavigate();
-  const [address, setAddress]         = useState('');
+  const { state }       = useLocation();
+  const navigate        = useNavigate();
+  const [address, setAddress]           = useState('');
   const [deliveryTime, setDeliveryTime] = useState('07:30');
   const API = process.env.REACT_APP_API_BASE_URL;
 
@@ -116,11 +127,11 @@ export default function Checkout() {
         </div>
 
         <div className="time-entry">
-          <label htmlFor="deliveryTime">Delivery time (Tomorrow 5:00am - 12:00pm)</label>
+          <label htmlFor="deliveryTime">Delivery time (Tomorrow 7:30 am – 12:00 pm)</label>
           <input
             id="deliveryTime"
             type="time"
-            step="1800"                // 30-minute increments
+            step="1800"       // 30-minute increments
             min="07:30"
             max="12:00"
             value={deliveryTime}
