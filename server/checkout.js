@@ -9,21 +9,27 @@ const { SquareClient, SquareEnvironment } = require('square');
 const { Storage } = require('@google-cloud/storage');
 
 console.log('[Checkout.js] Loaded checkout router');
-const accessToken = process.env.SQUARE_ACCESS_TEST_TOKEN;
-console.log('[Checkout.js] Using Square token:', accessToken);
+console.log('[Checkout.js] Using Square token:', process.env.SQUARE_ACCESS_TEST_TOKEN);
 
 // Enable CORS (including OPTIONS preflight)
 router.use(cors());
 
 const transporter = nodemailer.createTransport({
-  host:   process.env.SMTP_HOST,
-  port:   +process.env.SMTP_PORT,
-  secure: process.env.SMTP_SECURE === 'true',
+  host:   process.env.SMTP_HOST,                  // smtp.gmail.com
+  port:   +process.env.SMTP_PORT,                 // 587
+  secure: process.env.SMTP_SECURE === 'true',     // false
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
+    user: process.env.SMTP_USER,                  // fedderslit@gmail.com
+    pass: process.env.SMTP_PASS                   // Wade!Frog6
+  },
+  logger: true,   // enable nodemailer internal logging
+  debug: true     // include SMTP protocol debug output
 });
+
+// verify SMTP connectivity once at startup
+transporter.verify()
+  .then(() => console.log('[send-email][verify] SMTP connection is OK'))
+  .catch(err => console.error('[send-email][verify] SMTP connection FAILED', err));
 
 const storage      = new Storage();
 const bucketName   = 'sojea';
@@ -68,7 +74,7 @@ router.post('/process-payment', async (req, res) => {
 
     const client   = new SquareClient({
       environment: SquareEnvironment.Sandbox,
-      token: accessToken,
+      token: process.env.SQUARE_ACCESS_TEST_TOKEN,
     });
     const response = await client.payments.create({
       sourceId,
@@ -112,7 +118,8 @@ router.post('/send-email', async (req, res) => {
 
     const lineItems = items.map(i => `• ${i.name} × ${i.quantity}`).join('\n');
     console.log('[send-email] Line items:\n', lineItems);
-    const bodyText  = `
+
+    const bodyText = `
 Customer Email:
 ${userEmail}
 
@@ -125,19 +132,24 @@ ${lineItems}
 Total: $${totalPrice.toFixed(2)}
     `.trim();
 
-    console.log('[send-email] Sending email to garrett.strange@yahoo.com');
-    await transporter.sendMail({
-      from:    process.env.SMTP_USER,
+    const mailOpts = {
+      from:    process.env.SMTP_FROM || process.env.SMTP_USER, // fedderslit@gmail.com
       to:      'garrett.strange@yahoo.com',
       subject: `New Order from ${userEmail}`,
       text:    bodyText
-    });
+    };
+    console.log('[send-email] Mail options:', mailOpts);
+
+    const info = await transporter.sendMail(mailOpts);
+    console.log('[send-email] sendMail response:', info);
 
     console.log('[send-email] Email sent successfully');
     res.status(200).json({ success: true });
 
   } catch (err) {
-    console.error('[send-email] Error:', err);
+    console.error('[send-email] Error caught:', err);
+    if (err.response)     console.error('[send-email] SMTP response:', err.response);
+    if (err.responseCode) console.error('[send-email] SMTP responseCode:', err.responseCode);
     res.status(500).json({ error: err.message });
   }
 });
