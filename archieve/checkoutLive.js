@@ -8,19 +8,22 @@ const nodemailer = require('nodemailer');
 const { SquareClient, SquareEnvironment } = require('square');
 const { Storage } = require('@google-cloud/storage');
 
+console.log('[Checkout.js] Loaded checkout router');
+console.log('[Checkout.js] Using Square token:', process.env.SQUARE_ACCESS_LIVE_TOKEN);
+
 // Enable CORS (including OPTIONS preflight)
 router.use(cors());
 
 const transporter = nodemailer.createTransport({
-  host:   process.env.SMTP_HOST,                  
-  port:   +process.env.SMTP_PORT,                 
-  secure: process.env.SMTP_SECURE === 'true',     
+  host:   process.env.SMTP_HOST,                  // smtp.gmail.com
+  port:   +process.env.SMTP_PORT,                 // 587
+  secure: process.env.SMTP_SECURE === 'true',     // false
   auth: {
-    user: process.env.SMTP_USER,                  
-    pass: process.env.SMTP_PASS                   
+    user: process.env.SMTP_USER,                  // fedderslit@gmail.com
+    pass: process.env.SMTP_PASS                   // Wade!Frog6
   },
-  logger: true,   
-  debug: true     
+  logger: true,   // enable nodemailer internal logging
+  debug: true     // include SMTP protocol debug output
 });
 
 // verify SMTP connectivity once at startup
@@ -49,7 +52,7 @@ async function readJSON(path, defaultData) {
 }
 
 // ————————————————
-// 1) process-payment (unchanged)
+// 1) process-payment
 // ————————————————
 router.post('/process-payment', async (req, res) => {
   console.log('>>> [process-payment] Method:', req.method, 'Path:', req.path);
@@ -62,13 +65,16 @@ router.post('/process-payment', async (req, res) => {
 
   try {
     const allCarts   = await readJSON(cartFilePath, {});
+    console.log('[process-payment] Loaded cart:', allCarts[userId]);
     const items      = allCarts[userId] || [];
     const totalPrice = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    console.log('[process-payment] Computed totalPrice:', totalPrice);
     const amount     = BigInt(Math.round(totalPrice * 100));
+    console.log('[process-payment] Charging amount (cents):', amount.toString());
 
     const client   = new SquareClient({
-      environment: SquareEnvironment.Sandbox,
-      token: process.env.SQUARE_ACCESS_TEST_TOKEN,
+      environment: SquareEnvironment.Production,
+      token: process.env.SQUARE_ACCESS_LIVE_TOKEN,
     });
     const response = await client.payments.create({
       sourceId,
@@ -82,6 +88,7 @@ router.post('/process-payment', async (req, res) => {
         typeof v === 'bigint' ? v.toString() : v
       )
     );
+    console.log('[process-payment] Sending success response');
     res.status(200).json(safe);
 
   } catch (err) {
@@ -91,51 +98,33 @@ router.post('/process-payment', async (req, res) => {
 });
 
 // ————————————————
-// 2) send-email (with order and delivery times)
+// 2) send-email
 // ————————————————
 router.post('/send-email', async (req, res) => {
   console.log('>>> [send-email] Method:', req.method, 'Path:', req.path);
   console.log('[send-email] Body:', req.body);
-  const { userId, userEmail, address, deliveryTime } = req.body;
-  if (!userId || !userEmail || !address || !deliveryTime) {
-    console.warn('[send-email] Missing one of userId/userEmail/address/deliveryTime');
-    return res.status(400).json({ error: 'Missing userId, userEmail, address, or deliveryTime' });
+  const { userId, userEmail, address } = req.body;
+  if (!userId || !userEmail || !address) {
+    console.warn('[send-email] Missing userId/userEmail/address');
+    return res.status(400).json({ error: 'Missing userId, userEmail, or address' });
   }
 
   try {
-    // Read cart
     const allCarts   = await readJSON(cartFilePath, {});
+    console.log('[send-email] Loaded cart for userId=', userId, allCarts[userId]);
     const items      = allCarts[userId] || [];
     const totalPrice = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    console.log('[send-email] Computed totalPrice:', totalPrice);
 
-    // Build line items
     const lineItems = items.map(i => `• ${i.name} × ${i.quantity}`).join('\n');
+    console.log('[send-email] Line items:\n', lineItems);
 
-    // Format the order timestamp (Eastern Time)
-    const orderTime = new Date().toLocaleString('en-US', {
-      timeZone: 'America/New_York',
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true
-    });
-
-    // Format deliveryTime ("HH:MM") into "H:MM am/pm"
-    const [h, m] = deliveryTime.split(':').map(Number);
-    const ampm   = h >= 12 ? 'pm' : 'am';
-    const hour12 = h % 12 || 12;
-    const deliveryDisplay = `${hour12}:${m.toString().padStart(2,'0')} ${ampm}`;
-
-    // Compose email body
     const bodyText = `
-Order placed at: ${orderTime}
-
 Customer Email:
 ${userEmail}
 
 Shipping Address:
 ${address}
-
-Delivery Slot:
-Tomorrow at ${deliveryDisplay}
 
 Order Items:
 ${lineItems}
@@ -143,18 +132,17 @@ ${lineItems}
 Total: $${totalPrice.toFixed(2)}
     `.trim();
 
-    // Send it
     const mailOpts = {
-      from:    process.env.SMTP_FROM || process.env.SMTP_USER,
+      from:    process.env.SMTP_FROM || process.env.SMTP_USER, // fedderslit@gmail.com
       to:      'sojea2025@outlook.com',
       subject: `New Order from ${userEmail}`,
       text:    bodyText
     };
-    console.log('[send-email] Mail options:', mailOpts);
 
     const info = await transporter.sendMail(mailOpts);
     console.log('[send-email] sendMail response:', info);
 
+    console.log('[send-email] Email sent successfully');
     res.status(200).json({ success: true });
 
   } catch (err) {

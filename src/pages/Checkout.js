@@ -11,28 +11,33 @@ export function CheckedOut() {
   const [done, setDone] = useState(false);
   const API = process.env.REACT_APP_API_BASE_URL;
 
+  // Format deliveryTime into "H:MM am/pm"
+  const formatDelivery = t => {
+    const [h, m] = t.split(':').map(Number);
+    const ampm   = h >= 12 ? 'pm' : 'am';
+    const hour12 = h % 12 || 12;
+    return `${hour12}:${m.toString().padStart(2,'0')} ${ampm}`;
+  };
+
   useEffect(() => {
-    if (!state || !state.address || !state.userId) {
+    if (!state || !state.address || !state.userId || !state.deliveryTime) {
       return navigate('/');
     }
 
     async function finalize() {
       try {
-        console.log('[CheckedOut] sending email...');
         await fetch(`${API}/api/checkout/send-email`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({
-            userId:    state.userId,
-            userEmail: state.userEmail,
-            address:   state.address
+            userId:       state.userId,
+            userEmail:    state.userEmail,
+            address:      state.address,
+            deliveryTime: state.deliveryTime
           })
         });
 
-        console.log('[CheckedOut] clearing cart...');
-        await fetch(`${API}/api/cart/${state.userId}`, {
-          method: 'DELETE'
-        });
+        await fetch(`${API}/api/cart/${state.userId}`, { method: 'DELETE' });
       } catch (err) {
         console.error('[CheckedOut] finalize error:', err);
       } finally {
@@ -47,11 +52,13 @@ export function CheckedOut() {
     return <p className="checkout-loading">Finalizing your order…</p>;
   }
 
+  const deliveryStr = formatDelivery(state.deliveryTime);
   return (
     <div className="container">
       <div className="wrapper">
         <h1 className="checkout-title">Thank You!</h1>
-        <p>Your order is confirmed and on its way.</p>
+        <p>Your order was placed successfully.</p>
+        <p><strong>Delivery:</strong> Tomorrow at {deliveryStr}</p>
         <button onClick={() => navigate('/')}>Return Home</button>
       </div>
     </div>
@@ -61,7 +68,8 @@ export function CheckedOut() {
 export default function Checkout() {
   const { state }    = useLocation();
   const navigate     = useNavigate();
-  const [address, setAddress] = useState('');
+  const [address, setAddress]         = useState('');
+  const [deliveryTime, setDeliveryTime] = useState('07:30');
   const API = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
@@ -76,7 +84,14 @@ export default function Checkout() {
 
   const handleSuccess = () => {
     navigate('/checkedout', {
-      state: { address, totalQuantity, totalPrice, userId, userEmail }
+      state: {
+        address,
+        totalQuantity,
+        totalPrice,
+        userId,
+        userEmail,
+        deliveryTime
+      }
     });
   };
 
@@ -97,6 +112,19 @@ export default function Checkout() {
             value={address}
             onChange={e => setAddress(e.target.value)}
             placeholder="123 Main St, City, State ZIP"
+          />
+        </div>
+
+        <div className="time-entry">
+          <label htmlFor="deliveryTime">Choose delivery time (Tomorrow)</label>
+          <input
+            id="deliveryTime"
+            type="time"
+            step="1800"                // 30-minute increments
+            min="07:30"
+            max="12:00"
+            value={deliveryTime}
+            onChange={e => setDeliveryTime(e.target.value)}
           />
         </div>
 
