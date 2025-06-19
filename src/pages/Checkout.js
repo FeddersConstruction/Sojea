@@ -1,9 +1,9 @@
 // src/pages/Checkout.js
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate }        from 'react-router-dom';
 import '../styles/Checkout.css';
-import SquareForm from '../components/SquareForm';
+import SquareForm                           from '../components/SquareForm';
 
 export function CheckedOut() {
   const { state } = useLocation();
@@ -11,8 +11,21 @@ export function CheckedOut() {
 
   useEffect(() => {
     if (!state || !state.address) {
-      navigate('/cart');
+      return navigate('/cart');
     }
+
+    // fire-and-forget the email
+    fetch('/api/checkout/send-email', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        userId:  state.userId,
+        address: state.address
+      })
+    })
+    .then(r => r.json())
+    .then(console.log)
+    .catch(console.error);
   }, [state, navigate]);
 
   return (
@@ -32,7 +45,7 @@ export default function Checkout() {
   const [address, setAddress] = useState('');
 
   useEffect(() => {
-    if (!state || state.totalPrice == null) {
+    if (!state || state.totalPrice == null || !state.userId) {
       navigate('/cart');
     }
   }, [state, navigate]);
@@ -51,12 +64,8 @@ export default function Checkout() {
         <h1 className="checkout-title">Checkout</h1>
 
         <div className="checkout-summary green-text">
-          <div>
-            <strong>Total items:</strong> {totalQuantity}
-          </div>
-          <div>
-            <strong>Total price:</strong> ${totalPrice.toFixed(2)}
-          </div>
+          <div><strong>Total items:</strong> {totalQuantity}</div>
+          <div><strong>Total price:</strong> ${totalPrice.toFixed(2)}</div>
         </div>
 
         <div className="address-entry">
