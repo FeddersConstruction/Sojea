@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
-import Navbar from '../components/Navbar';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -81,7 +80,6 @@ export default function Cart() {
 
   return (
     <div className="container">
-      <Navbar />
       <div className="wrapper">
         <h2>Your Cart</h2>
 

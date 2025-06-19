@@ -9,7 +9,7 @@ const { SquareClient, SquareEnvironment } = require('square');
 const { Storage } = require('@google-cloud/storage');
 
 console.log('[Checkout.js] Loaded checkout router');
-console.log('[Checkout.js] Using Square token:', process.env.SQUARE_ACCESS_TEST_TOKEN);
+console.log('[Checkout.js] Using Square token:', process.env.SQUARE_ACCESS_LIVE_TOKEN);
 
 // Enable CORS (including OPTIONS preflight)
 router.use(cors());
@@ -73,7 +73,7 @@ router.post('/process-payment', async (req, res) => {
     console.log('[process-payment] Charging amount (cents):', amount.toString());
 
     const client   = new SquareClient({
-      environment: SquareEnvironment.Sandbox,
+      environment: SquareEnvironment.Production,
       token: process.env.SQUARE_ACCESS_TEST_TOKEN,
     });
     const response = await client.payments.create({
@@ -134,11 +134,10 @@ Total: $${totalPrice.toFixed(2)}
 
     const mailOpts = {
       from:    process.env.SMTP_FROM || process.env.SMTP_USER, // fedderslit@gmail.com
-      to:      'garrett.strange@yahoo.com',
+      to:      'sojea2025@outlook.com',
       subject: `New Order from ${userEmail}`,
       text:    bodyText
     };
-    console.log('[send-email] Mail options:', mailOpts);
 
     const info = await transporter.sendMail(mailOpts);
     console.log('[send-email] sendMail response:', info);
