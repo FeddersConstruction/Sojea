@@ -1,8 +1,7 @@
-// src/pages/Cart.js
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
+import Navbar from '../components/Navbar';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -16,6 +15,7 @@ export default function Cart() {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
+    console.log('[Cart] Loaded user from localStorage:', user);
     if (!user) {
       navigate('/auth');
       return;
@@ -33,7 +33,7 @@ export default function Cart() {
       setTotalQuantity(data.totalQuantity);
       setTotalPrice(data.totalPrice);
     } catch (err) {
-      console.error(err);
+      console.error('[Cart] Could not load cart:', err);
       setError('Could not load cart');
     } finally {
       setLoading(false);
@@ -77,10 +77,11 @@ export default function Cart() {
   };
 
   if (loading) return <p className="cart-loading">Loading cart…</p>;
-  if (error) return <p className="cart-error">{error}</p>;
+  if (error)   return <p className="cart-error">{error}</p>;
 
   return (
     <div className="container">
+      <Navbar />
       <div className="wrapper">
         <h2>Your Cart</h2>
 
@@ -95,35 +96,21 @@ export default function Cart() {
                     <span className="item-name">{item.name}</span>
                     <div className="item-controls">
                       <button
-                        onClick={() =>
-                          updateQuantity(
-                            item.productId,
-                            Math.max(1, item.quantity - 1)
-                          )
-                        }
+                        onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity-1))}
                         disabled={item.quantity <= 1}
-                      >
-                        −
-                      </button>
+                      >−</button>
                       <span className="item-qty">{item.quantity}</span>
                       <button
-                        onClick={() =>
-                          updateQuantity(item.productId, item.quantity + 1)
-                        }
-                      >
-                        +
-                      </button>
+                        onClick={() => updateQuantity(item.productId, item.quantity+1)}
+                      >+</button>
                       <button
                         className="item-remove"
                         onClick={() => removeItem(item.productId)}
-                      >
-                        X
-                      </button>
+                      >X</button>
                     </div>
                   </div>
                   <div className="item-subtotal">
-                    {item.quantity} × ${item.price.toFixed(2)} = $
-                    {(item.quantity * item.price).toFixed(2)}
+                    {item.quantity} × ${item.price.toFixed(2)} = ${(item.quantity * item.price).toFixed(2)}
                   </div>
                 </li>
               ))}
@@ -133,18 +120,22 @@ export default function Cart() {
               <div>Total items:</div>
               <div className="summary-value">{totalQuantity}</div>
               <div>Total price:</div>
-              <div className="summary-value">
-                ${totalPrice.toFixed(2)}
-              </div>
+              <div className="summary-value">${totalPrice.toFixed(2)}</div>
             </div>
 
             <button
               className="checkout-button"
-              onClick={() =>
+              onClick={() => {
+                const user = JSON.parse(localStorage.getItem('user'));
+                console.log('[Cart] Navigating to /checkout with userId:', user?.id);
                 navigate('/checkout', {
-                  state: { totalQuantity, totalPrice }
-                })
-              }
+                  state: {
+                    userId: user?.id,
+                    totalQuantity,
+                    totalPrice
+                  }
+                });
+              }}
             >
               Proceed to Checkout
             </button>

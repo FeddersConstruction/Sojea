@@ -1,4 +1,3 @@
-// src/components/SquareForm.js
 import React, { useState } from 'react';
 import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
 import '../styles/SquareForm.css';
@@ -16,20 +15,26 @@ export default function SquareForm({ userId, amount, address, onPaymentSuccess }
       return;
     }
 
+    console.log('[SquareForm] sourceId token:', tokenResult.token);
+    console.log('[SquareForm] posting body:', { userId, amount, address });
+
     setStatus('Processing payment…');
+
     try {
       const resp = await fetch(processUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sourceId: tokenResult.token,
-          userId,          // ← make sure this is here
-          amount,          // ← and this
-          address          // ← and this
+          userId,
+          amount,
+          address
         })
       });
 
       const data = await resp.json();
+      console.log('[SquareForm] Response from /process-payment:', resp.status, data);
+
       if (resp.ok) {
         setStatus('✅ Payment Successful!');
         onPaymentSuccess();
@@ -37,7 +42,7 @@ export default function SquareForm({ userId, amount, address, onPaymentSuccess }
         setStatus('❌ Payment Failed: ' + (data.error || 'Unknown'));
       }
     } catch (err) {
-      console.error(err);
+      console.error('[SquareForm] Network error:', err);
       setStatus('❌ Payment Failed: Network error');
     }
   };
