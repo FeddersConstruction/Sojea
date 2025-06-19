@@ -1,4 +1,5 @@
 const express    = require('express');
+const cors       = require('cors'); 
 const router     = express.Router();
 const crypto     = require('crypto');
 const nodemailer = require('nodemailer');
@@ -8,6 +9,8 @@ const { Storage } = require('@google-cloud/storage');
 console.log('[Checkout.js] Running in test mode (sandbox)');
 const accessToken  = process.env.SQUARE_ACCESS_TEST_TOKEN;
 console.log('[Checkout.js] Using Square token:', accessToken);
+
+router.use(cors());
 
 // —– SMTP transport for email —–
 const transporter = nodemailer.createTransport({
@@ -23,8 +26,6 @@ const transporter = nodemailer.createTransport({
 const storage      = new Storage();
 const bucketName   = 'sojea';
 const cartFilePath = 'json/cart.json';
-
-router.use(cors());
 
 async function ensureFileExists(path, defaultData) {
   const file   = storage.bucket(bucketName).file(path);
