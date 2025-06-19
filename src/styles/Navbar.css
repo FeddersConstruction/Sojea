@@ -1,7 +1,7 @@
 /* src/styles/Navbar.css */
 
 .navbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   width: 100%;
   box-sizing: border-box;
@@ -11,8 +11,9 @@
   align-items: center;
   background: #009039;
   color: #ffe9cf;
-  z-index: 1000;
+  z-index: 1000; /* stay above other content */
 }
+
 
 .nav-left {
   display: flex;

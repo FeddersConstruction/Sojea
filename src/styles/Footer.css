@@ -1,0 +1,69 @@
+/* src/styles/Footer.css */
+
+.footer {
+  width: 100%;
+  height: 50vh;
+  background: #ffda79;
+  color: #ff9233;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2vh 4vw;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 20vw;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 5vw; /* Increased font size */
+  font-weight: bold;
+  color: #ff9233;
+}
+
+.footer-icons {
+  display: flex;
+  gap: 4vw;
+}
+
+.footer-icon {
+  color: #ff9233;
+  font-size: 7vw;
+  transition: color 0.3s ease;
+}
+
+.footer-icon:hover {
+  color: #f7901e;
+}
+
+@media (orientation: portrait) {
+  .footer-content {
+    flex-direction: column;
+    gap: 2vh;
+  }
+
+  .footer-text {
+    font-size: 7vw; /* Larger for small screens too */
+  }
+
+  .footer-icon {
+    font-size: 9vw;
+  }
+}
+
+@media (orientation: landscape) {
+  .footer-text {
+    font-size: 4vw; /* Slightly larger in landscape too */
+  }
+
+  .footer-icon {
+    font-size: 4vw;
+  }
+}
