@@ -5,8 +5,8 @@ import '../styles/SquareForm.css';
 export default function SquareForm({ userId, amount, address, onPaymentSuccess }) {
   const [status, setStatus] = useState('');
 
-  const applicationId = 'sq0idp-RsIaXDcpZMkSJN1s7xKT6g';
-  const locationId    = 'L089JN7J44VK6';
+  const applicationId = 'sandbox-sq0idb-n5RoAfVLRwaiPBzgJ3guFw';
+  const locationId    = 'LA6VHX7XNJCD6';
   const processUrl    = 'https://sojea-871454313426.us-south1.run.app/api/checkout/process-payment';
 
   const cardTokenizeResponseReceived = async (tokenResult) => {
