@@ -7,7 +7,7 @@ import Start from './pages/Start';
 import Products from './pages/Products';
 import Auth from './pages/Auth';
 import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
+import Checkout, { CheckedOut } from './pages/Checkout';
 
 const App = () => {
   const location = useLocation();
@@ -19,6 +19,7 @@ const App = () => {
       <Route path="/auth" element={<Auth />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
+      <Route path="/checkedout" element={<CheckedOut />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
