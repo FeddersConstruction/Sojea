@@ -113,7 +113,7 @@ router.delete('/:userId/item/:productId', async (req, res) => {
   }
 });
 
-// NEW: DELETE entire cart
+// DELETE entire cart
 router.delete('/:userId', async (req, res) => {
   const uid = parseInt(req.params.userId, 10);
   try {

@@ -1,9 +1,9 @@
 // src/pages/Checkout.js
 
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate }        from 'react-router-dom';
 import '../styles/Checkout.css';
-import SquareForm from '../components/SquareForm';
+import SquareForm                           from '../components/SquareForm';
 
 export function CheckedOut() {
   const { state } = useLocation();
@@ -11,28 +11,29 @@ export function CheckedOut() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    // If we didn’t just come from a successful checkout, redirect home
     if (!state || !state.address || !state.userId) {
-      return navigate('/');
+      navigate('/');
+      return;
     }
 
     async function finalize() {
       try {
-        // 1) send email
+        // 1) send confirmation email
         await fetch('/api/checkout/send-email', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
+          body: JSON.stringify({
             userId:    state.userId,
             userEmail: state.userEmail,
             address:   state.address
           })
         });
 
-        // 2) clear cart
+        // 2) clear the cart
         await fetch(`/api/cart/${state.userId}`, {
           method: 'DELETE'
         });
-
       } catch (err) {
         console.error('[CheckedOut] finalize error:', err);
       } finally {
@@ -63,6 +64,7 @@ export default function Checkout() {
   const navigate     = useNavigate();
   const [address, setAddress] = useState('');
 
+  // redirect to cart if missing checkout data
   useEffect(() => {
     if (!state || state.totalPrice == null || !state.userId) {
       navigate('/cart');
