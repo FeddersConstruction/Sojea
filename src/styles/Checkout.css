@@ -69,8 +69,27 @@
   box-sizing: border-box;
 }
 
-/* ensure your existing portrait/landscape media rules still apply */
+/* time-entry styling (matches address-entry theme) */
+.time-entry {
+  margin: 2vh 0 4vh;
+  text-align: left;
+}
+.time-entry label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #009039;
+}
+.time-entry input[type="time"] {
+  width: 100%;
+  padding: 1vh 1vw;
+  font-size: 1rem;
+  border: 2px solid #009039;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}
 
+/* ensure your existing portrait/landscape media rules still apply */
 
 /* Portrait (taller) */
 @media (orientation: portrait) {

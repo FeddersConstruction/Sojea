@@ -116,7 +116,7 @@ export default function Checkout() {
         </div>
 
         <div className="time-entry">
-          <label htmlFor="deliveryTime">Choose delivery time (Tomorrow)</label>
+          <label htmlFor="deliveryTime">Delivery time (Tomorrow 5:00am - 12:00pm)</label>
           <input
             id="deliveryTime"
             type="time"
