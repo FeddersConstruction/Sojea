@@ -42,6 +42,36 @@
   margin-bottom: 3vh;
 }
 
+/* make totals green */
+.green-text {
+  color: #009039;
+}
+
+/* address entry styling */
+.address-entry {
+  margin: 2vh 0 4vh;
+  text-align: left;
+}
+.address-entry label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #009039;
+}
+.address-entry textarea {
+  width: 100%;
+  min-height: 6vh;
+  padding: 1vh 1vw;
+  font-size: 1rem;
+  border: 2px solid #009039;
+  border-radius: 0.5rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* ensure your existing portrait/landscape media rules still apply */
+
+
 /* Portrait (taller) */
 @media (orientation: portrait) {
   .wrapper {

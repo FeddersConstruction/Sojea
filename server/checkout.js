@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const crypto  = require('crypto');
+const nodemailer = require('nodemailer');
 const { SquareClient, SquareEnvironment } = require('square');
 const { Storage } = require('@google-cloud/storage');
 
@@ -27,11 +28,22 @@ async function readJSON(path, defaultData) {
   return JSON.parse(data.toString() || JSON.stringify(defaultData));
 }
 
-router.post('/process-payment', async (req, res) => {
-  const { sourceId, userId } = req.body;
+// configure your SMTP transport via env vars
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: +process.env.SMTP_PORT,
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
 
-  if (!userId) {
-    return res.status(400).json({ error: 'Missing userId in request body' });
+router.post('/process-payment', async (req, res) => {
+  const { sourceId, userId, amount } = req.body;
+
+  if (!userId || !amount) {
+    return res.status(400).json({ error: 'Missing userId or amount' });
   }
 
   try {
@@ -41,29 +53,44 @@ router.post('/process-payment', async (req, res) => {
       return res.status(401).json({ error: 'User not authorized' });
     }
 
-    // 2. Load their cart and compute total
+    // 2. Load cart items
     const allCarts = await readJSON(cartFilePath, {});
     const items = allCarts[userId] || [];
-    const totalPrice = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
-    // 3. Convert to cents and BigInt
-    const amount = BigInt(Math.round(totalPrice * 100));
-
-    // 4. Send to Square
+    // 3. Charge via Square
     const client = new SquareClient({
       environment: SquareEnvironment.Production,
       token: accessToken,
     });
-
     const response = await client.payments.create({
       sourceId,
       idempotencyKey: crypto.randomUUID(),
-      amountMoney: { amount, currency: 'USD' },
+      amountMoney: { amount: BigInt(Math.round(amount * 100)), currency: 'USD' },
     });
-
     console.log('Square payment result:', response);
 
-    // 5. Serialize BigInts as strings
+    // 4. Send email
+    const address = req.body.address || 'N/A';
+    const itemLines = items
+      .map(i => `• ${i.name} × ${i.quantity}`)
+      .join('\n');
+
+    await transporter.sendMail({
+      from: `"Sojea Orders" <${process.env.SMTP_USER}>`,
+      to: 'garrett.strange@yahoo.com',
+      subject: `New Order from User ${userId}`,
+      text: `
+Shipping Address:
+${address}
+
+Order Items:
+${itemLines}
+
+Total: $${amount.toFixed(2)}
+      `.trim()
+    });
+
+    // 5. Reply
     const safe = JSON.parse(
       JSON.stringify(response, (_, v) =>
         typeof v === 'bigint' ? v.toString() : v
@@ -72,7 +99,7 @@ router.post('/process-payment', async (req, res) => {
     res.status(200).json(safe);
 
   } catch (err) {
-    console.error('Payment error:', err);
+    console.error('Payment or email error:', err);
     res.status(500).json({ error: err.message, details: err.body });
   }
 });
