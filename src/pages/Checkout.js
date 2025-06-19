@@ -2,7 +2,6 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Checkout.css';
 import SquareForm from '../components/SquareForm';
-import Navbar from '../components/Navbar';
 
 export default function Checkout() {
   const { state } = useLocation();
@@ -19,7 +18,6 @@ export default function Checkout() {
 
   return (
     <div className="container">
-      <Navbar />
       <div className="wrapper">
         <h1 className="checkout-title">Checkout</h1>
 
