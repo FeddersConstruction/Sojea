@@ -36,7 +36,7 @@ export default function Products() {
     <>
       <Navbar />
       <section className="products-page">
-      <h2 className="products-title">Our Products</h2>
+      <p className="products-title">Our Products</p>
       <div className="products-grid">
         {products.map(prod => {
           const imageUrl = `${API}/api/products/img/${prod.image}`;

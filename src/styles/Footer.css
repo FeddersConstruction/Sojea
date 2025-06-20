@@ -33,6 +33,7 @@
 }
 
 .footer-icon {
+  position: relative;       /* needed for tooltip positioning */
   color: #ff9233;
   font-size: 7vw;
   transition: color 0.3s ease;
@@ -42,9 +43,31 @@
   color: #f7901e;
 }
 
+/* Custom tooltip */
+.footer-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;            /* position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 2.5vw;
+  padding: 0.5vw 1vw;
+  border-radius: 0.5vw;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.footer-icon:hover::after {
+  opacity: 1;
+}
+
 @media (orientation: portrait) {
   .footer {
-      height: 30vh;
+    height: 30vh;
   }
 
   .footer-content {
@@ -59,18 +82,30 @@
   .footer-icon {
     font-size: 9vw;
   }
+
+  .footer-icon::after {
+    font-size: 3.5vw;
+    padding: 1vw 2vw;
+    border-radius: 1vw;
+  }
 }
 
 @media (orientation: landscape) {
   .footer {
-      height: 50vh;
+    height: 50vh;
   }
-  
+
   .footer-text {
     font-size: 4vw; /* Slightly larger in landscape too */
   }
 
   .footer-icon {
     font-size: 4vw;
+  }
+
+  .footer-icon::after {
+    font-size: 2vw;
+    padding: 0.4vw 0.8vw;
+    border-radius: 0.4vw;
   }
 }

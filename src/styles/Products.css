@@ -8,7 +8,6 @@
 
 .products-title {
   text-align: center;
-  font-size: 5vh;
   color: #ffda79;
   margin-bottom: 4vh;
 }
@@ -25,7 +24,17 @@
   .products-grid {
     grid-template-columns: 1fr;
   }
+  .products-title {
+    font-size: 6vh;
+  }
 }
+
+@media (orientation: landscape) {
+  .products-title {
+    font-size: 10vh;
+  }
+}
+
 
 .products-loading,
 .products-error {
