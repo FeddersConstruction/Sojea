@@ -19,10 +19,13 @@
   box-shadow: 0 1vh 2vh rgba(0,0,0,0.15);
 }
 
+/* === make every image a fixed square === */
 .product-image {
   width: 80%;
-  border-radius: 1vh;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+  border-radius: 1vh;
+  display: block;
 }
 
 /* Wrap info + actions side by side */
@@ -120,7 +123,7 @@
   100% { opacity: 0; }
 }
 
-/* Portrait */
+/* Portrait adjustments */
 @media (orientation: portrait) {
   .product-card {
     padding: 2vh 2vw;
@@ -131,7 +134,7 @@
   }
 }
 
-/* Landscape */
+/* Landscape adjustments */
 @media (orientation: landscape) {
   .product-card {
     padding: 1vh 1.5vw;

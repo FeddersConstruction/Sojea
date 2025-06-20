@@ -75,5 +75,5 @@ export default function ProductCard({ id, imageUrl, name, price }) {
 
       {added && <div className="added-message">Added to cart!</div>}
     </div>
-  );
+);
 }
