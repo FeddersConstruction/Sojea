@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import '../styles/Products.css';
 import Navbar  from '../components/Navbar';
+import Footer  from '../components/Footer';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -51,6 +52,7 @@ export default function Products() {
         })}
       </div>
     </section>
+    <Footer />
   </>
   );
 }

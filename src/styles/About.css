@@ -9,37 +9,6 @@
 }
 
 /* ————————————————————————— */
-/* Landscape: two 50% columns, full-height */
-/* ————————————————————————— */
-@media (orientation: landscape) {
-  .about-container {
-    flex-direction: row;
-  }
-  .about-text,
-  .about-image {
-    flex: 0 0 50%;    /* exactly half of the container’s width */
-    height: 100vh;
-  }
-}
-
-/* ————————————————————————— */
-/* Portrait: stacked blocks, half-height */
-/* ————————————————————————— */
-@media (orientation: portrait) {
-  .about-container {
-    flex-direction: column;
-  }
-  .about-text,
-  .about-image {
-    width: 100%;
-    flex: 0 0 50vh;   /* each takes half the viewport height */
-  }
-  /* (Optional) bump up text size on narrow screens */
-  .about-text h2 { font-size: 7vw; }
-  .about-text p  { font-size: 4.5vw; }
-}
-
-/* ————————————————————————— */
 /* Text area styling */
 /* ————————————————————————— */
 .about-text {
@@ -48,12 +17,8 @@
   justify-content: center;
   padding: 4vh 4vw;
 }
-.about-text h2 {
-  font-size: 5vw;
-  margin-bottom: 2vh;
-}
+
 .about-text p {
-  font-size: 3.5vw;
   line-height: 1.4;
 }
 
@@ -72,4 +37,45 @@
   display: block;
   user-select: none;
   pointer-events: none;
+}
+
+/* ————————————————————————— */
+/* Landscape: two 50% columns, full-height */
+/* ————————————————————————— */
+/* Landscape: side by side */
+@media (orientation: landscape) {
+  .about-container {
+    flex-direction: row;
+  }
+  .about-image,
+  .about-text {
+    width: 50%;
+    height: 100%;
+  }
+  .about-title {
+    font-size: 6vw;
+    margin-bottom: 4vh;
+  }
+  .about-body {
+    font-size: 4vw;
+  }
+}
+
+/* Portrait: stacked, text first */
+@media (orientation: portrait) {
+  .about-container {
+    flex-direction: column;
+  }
+  .about-image,
+  .about-text {
+    width: 100%;
+    height: 50vh;
+  }
+  .about-title {
+    font-size: 10vw;
+    margin-bottom: 2vh;
+  }
+  .about-body {
+    font-size: 8vw;
+  }
 }

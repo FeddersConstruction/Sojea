@@ -5,6 +5,7 @@ import '../styles/Auth.css'
 import Login from '../components/Login'
 import Signup from '../components/Signup'
 import Navbar  from '../components/Navbar';
+import Footer  from '../components/Footer';
 
 export default function Auth() {
   const [mode, setMode] = useState('login')
@@ -55,30 +56,34 @@ export default function Auth() {
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-form-wrapper">
-        <div className="auth-toggle">
-          <button
-            className={mode === 'login' ? 'active' : ''}
-            onClick={() => { setMode('login'); setError(null) }}
-          >
-            Login
-          </button>
-          <button
-            className={mode === 'signup' ? 'active' : ''}
-            onClick={() => { setMode('signup'); setError(null) }}
-          >
-            Sign Up
-          </button>
+      <>
+        <Navbar />
+        <div className="auth-container">
+          <div className="auth-form-wrapper">
+            <div className="auth-toggle">
+              <button
+                className={mode === 'login' ? 'active' : ''}
+                onClick={() => { setMode('login'); setError(null) }}
+              >
+                Login
+              </button>
+              <button
+                className={mode === 'signup' ? 'active' : ''}
+                onClick={() => { setMode('signup'); setError(null) }}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            {error && <div className="auth-error">{error}</div>}
+
+            {mode === 'login'
+              ? <Login onSubmit={handleLogin} />
+              : <Signup onSubmit={handleSignup} />
+            }
+          </div>
         </div>
-
-        {error && <div className="auth-error">{error}</div>}
-
-        {mode === 'login'
-          ? <Login onSubmit={handleLogin} />
-          : <Signup onSubmit={handleSignup} />
-        }
-      </div>
-    </div>
+        <Footer />
+    </>
   )
 }

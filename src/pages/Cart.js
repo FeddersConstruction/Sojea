@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
+import Navbar  from '../components/Navbar';
+import Footer  from '../components/Footer';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -79,67 +81,71 @@ export default function Cart() {
   if (error)   return <p className="cart-error">{error}</p>;
 
   return (
-    <div className="container">
-      <div className="wrapper">
-        <h2>Your Cart</h2>
+    <>
+      <Navbar />
+      <div className="container">
+        <div className="wrapper">
+          <h2>Your Cart</h2>
 
-        {items.length === 0 ? (
-          <p className="empty-cart">Your cart is empty.</p>
-        ) : (
-          <>
-            <ul className="cart-list">
-              {items.map(item => (
-                <li key={item.productId} className="cart-item">
-                  <div className="item-top-row">
-                    <span className="item-name">{item.name}</span>
-                    <div className="item-controls">
-                      <button
-                        onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity-1))}
-                        disabled={item.quantity <= 1}
-                      >−</button>
-                      <span className="item-qty">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity+1)}
-                      >+</button>
-                      <button
-                        className="item-remove"
-                        onClick={() => removeItem(item.productId)}
-                      >X</button>
+          {items.length === 0 ? (
+            <p className="empty-cart">Your cart is empty.</p>
+          ) : (
+            <>
+              <ul className="cart-list">
+                {items.map(item => (
+                  <li key={item.productId} className="cart-item">
+                    <div className="item-top-row">
+                      <span className="item-name">{item.name}</span>
+                      <div className="item-controls">
+                        <button
+                          onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity-1))}
+                          disabled={item.quantity <= 1}
+                        >−</button>
+                        <span className="item-qty">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.productId, item.quantity+1)}
+                        >+</button>
+                        <button
+                          className="item-remove"
+                          onClick={() => removeItem(item.productId)}
+                        >X</button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="item-subtotal">
-                    {item.quantity} × ${item.price.toFixed(2)} = ${(item.quantity * item.price).toFixed(2)}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <div className="item-subtotal">
+                      {item.quantity} × ${item.price.toFixed(2)} = ${(item.quantity * item.price).toFixed(2)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
 
-            <div className="cart-summary">
-              <div>Total items:</div>
-              <div className="summary-value">{totalQuantity}</div>
-              <div>Total price:</div>
-              <div className="summary-value">${totalPrice.toFixed(2)}</div>
-            </div>
+              <div className="cart-summary">
+                <div>Total items:</div>
+                <div className="summary-value">{totalQuantity}</div>
+                <div>Total price:</div>
+                <div className="summary-value">${totalPrice.toFixed(2)}</div>
+              </div>
 
-            <button
-              className="checkout-button"
-              onClick={() => {
-                const user = JSON.parse(localStorage.getItem('user'));
-                console.log('[Cart] Navigating to /checkout with userId:', user?.id);
-                navigate('/checkout', {
-                  state: {
-                    userId: user?.id,
-                    totalQuantity,
-                    totalPrice
-                  }
-                });
-              }}
-            >
-              Proceed to Checkout
-            </button>
-          </>
-        )}
+              <button
+                className="checkout-button"
+                onClick={() => {
+                  const user = JSON.parse(localStorage.getItem('user'));
+                  console.log('[Cart] Navigating to /checkout with userId:', user?.id);
+                  navigate('/checkout', {
+                    state: {
+                      userId: user?.id,
+                      totalQuantity,
+                      totalPrice
+                    }
+                  });
+                }}
+              >
+                Proceed to Checkout
+              </button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }

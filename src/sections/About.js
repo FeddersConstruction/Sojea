@@ -6,8 +6,8 @@ export default function About() {
   return (
     <section id="about" className="about-container">
       <div className="about-text">
-        <h2>About Us</h2>
-        <p>
+        <p className="about-title">About Us</p>
+        <p className="about-body">
           We’re a small team passionate about bringing you the best products
           with care and integrity. Our mission is to serve you well and make
           your life easier.

@@ -1,19 +1,32 @@
 /* src/styles/Navbar.css */
 
+/* 1) Make the bar sticky at the top of its flow */
 .navbar {
   position: sticky;
   top: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
+
+  transform: translateY(0);
+  transition: transform 300ms ease-in-out;
+
   box-sizing: border-box;
   padding: 2vh 4vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   background: #009039;
   color: #ffe9cf;
-  z-index: 1000; /* stay above other content */
+  z-index: 1000;
 }
 
+/* 2) Slide up out of view when hidden */
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+/* 3) Everything else stays the same… */
 
 .nav-left {
   display: flex;
@@ -24,10 +37,7 @@
   font-weight: bold;
   color: #ffe9cf;
   text-decoration: none;
-}
-
-.nav-item:last-child {
-  margin-right: 0;
+  margin-right: 2vw;
 }
 
 .nav-menu-icon {
@@ -44,7 +54,6 @@
   align-items: center;
 }
 
-/* Both the link-icons and the logout button share these exact rules */
 .nav-icon,
 .nav-logout {
   display: inline-flex;
@@ -53,37 +62,31 @@
   color: inherit;
   text-decoration: none;
   margin-left: 4vw;
-  position: relative;
-  background: none;      /* so button has no default BG */
-  border: none;           /* so button has no default border */
-  cursor: pointer;        /* match link cursor */
-  padding: 0;             /* remove default button padding */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .nav-text {
   display: none;
   margin-left: 1vw;
   font-size: 3.5vw;
-  color: inherit;
 }
 
-/* Hover for both link-icons and logout button */
 .nav-item:hover,
 .nav-icon:hover,
 .nav-logout:hover {
   color: #f7901e;
 }
 
-/* Portrait: show hamburger, full-width dropdown */
+/* Portrait: smooth dropdown */
 @media (orientation: portrait) {
   .nav-menu-icon {
     display: inline-flex;
   }
+
   .nav-right {
-    display: none;
-  }
-  .nav-right.open {
-    display: flex;
     position: absolute;
     top: 100%;
     left: 0;
@@ -91,7 +94,18 @@
     flex-direction: column;
     background: #329b3e;
     z-index: 1001;
+
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease, opacity 300ms ease;
   }
+
+  .nav-right.open {
+    max-height: 100vh;
+    opacity: 1;
+  }
+
   .nav-icon,
   .nav-logout {
     margin: 2vh 0;
@@ -99,30 +113,34 @@
     justify-content: center;
     width: 100%;
   }
+
   .nav-icon svg,
   .nav-logout svg {
     visibility: hidden;
   }
+
   .nav-text {
     display: inline;
     font-size: 5.5vw;
   }
+
   .nav-item {
     font-size: 5vw;
     margin-right: 4vw;
   }
 }
 
-/* Landscape: inline icons, hide hamburger/dropdown */
+/* Landscape: inline menu */
 @media (orientation: landscape) {
   .nav-menu-icon {
     display: none;
-    font-size: 6vw;
   }
   .nav-right {
     display: flex !important;
     position: static;
     flex-direction: row;
+    max-height: none;
+    opacity: 1;
   }
   .nav-icon svg,
   .nav-logout svg {
