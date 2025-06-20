@@ -1,24 +1,21 @@
-// src/pages/Auth.js good
+// src/pages/Auth.js
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Auth.css'
-import Login from '../components/Login'
-import Signup from '../components/Signup'
-import Navbar  from '../components/Navbar';
-import Footer  from '../components/Footer';
+import Login   from '../components/Login'
+import Signup  from '../components/Signup'
+import Navbar  from '../components/Navbar'
+import Footer  from '../components/Footer'
 
 export default function Auth() {
-  const [mode, setMode] = useState('login')
+  const [mode, setMode]   = useState('login')
   const [error, setError] = useState(null)
-  const navigate = useNavigate()
-  const API = process.env.REACT_APP_API_BASE_URL
-
+  const navigate          = useNavigate()
+  const API               = process.env.REACT_APP_API_BASE_URL
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'))
-    if (user) {
-      navigate('/', { replace: true })
-    }
+    if (user) navigate('/', { replace: true })
   }, [navigate])
 
   const handleLogin = async ({ email, password }) => {
@@ -27,7 +24,7 @@ export default function Auth() {
       const res = await fetch(`${API}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Login failed')
@@ -44,7 +41,7 @@ export default function Auth() {
       const res = await fetch(`${API}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Signup failed')
@@ -56,34 +53,34 @@ export default function Auth() {
   }
 
   return (
-      <>
-        <Navbar />
-        <div className="auth-container">
-          <div className="auth-form-wrapper">
-            <div className="auth-toggle">
-              <button
-                className={mode === 'login' ? 'active' : ''}
-                onClick={() => { setMode('login'); setError(null) }}
-              >
-                Login
-              </button>
-              <button
-                className={mode === 'signup' ? 'active' : ''}
-                onClick={() => { setMode('signup'); setError(null) }}
-              >
-                Sign Up
-              </button>
-            </div>
-
-            {error && <div className="auth-error">{error}</div>}
-
-            {mode === 'login'
-              ? <Login onSubmit={handleLogin} />
-              : <Signup onSubmit={handleSignup} />
-            }
+    <>
+      <Navbar />
+      <div className="auth-container">
+        <div className="auth-form-wrapper">
+          <div className="auth-toggle">
+            <button
+              className={mode === 'login' ? 'active' : ''}
+              onClick={() => { setMode('login'); setError(null) }}
+            >
+              Login
+            </button>
+            <button
+              className={mode === 'signup' ? 'active' : ''}
+              onClick={() => { setMode('signup'); setError(null) }}
+            >
+              Sign Up
+            </button>
           </div>
+
+          {/* no more black‐text banner here */}
+
+          {mode === 'login'
+            ? <Login  onSubmit={handleLogin} error={error} />
+            : <Signup onSubmit={handleSignup} error={error} />
+          }
         </div>
-        <Footer />
+      </div>
+      <Footer />
     </>
   )
 }

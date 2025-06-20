@@ -2,9 +2,9 @@
 import React, { useState } from 'react'
 import '../styles/Signup.css'
 
-export default function Signup({ onSubmit }) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+export default function Signup({ onSubmit, error = '' }) {
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmit = e => {
@@ -14,7 +14,10 @@ export default function Signup({ onSubmit }) {
 
   return (
     <form className="signup-form" onSubmit={handleSubmit}>
-      <h2 className="signup-title">Create Account</h2>
+      <h2 className={`signup-title ${error ? 'signup-error' : ''}`}>
+        {error || 'Create Account'}
+      </h2>
+
       <label>
         Full Name
         <input
@@ -25,6 +28,7 @@ export default function Signup({ onSubmit }) {
           required
         />
       </label>
+
       <label>
         Email
         <input
@@ -35,6 +39,7 @@ export default function Signup({ onSubmit }) {
           required
         />
       </label>
+
       <label>
         Password
         <input
@@ -45,6 +50,7 @@ export default function Signup({ onSubmit }) {
           required
         />
       </label>
+
       <button type="submit" className="signup-button">
         Sign Up
       </button>

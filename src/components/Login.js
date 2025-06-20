@@ -2,18 +2,21 @@
 import React, { useState } from 'react'
 import '../styles/Login.css'
 
-export default function Login({ onSubmit }) {
-  const [email, setEmail] = useState('')
+export default function Login({ onSubmit, error = '' }) {
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    onSubmit({ email, password })
+    await onSubmit({ email, password })
   }
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
-      <h2 className="login-title">Welcome Back</h2>
+      <h2 className={`login-title ${error ? 'login-error' : ''}`}>
+        {error || 'Welcome Back'}
+      </h2>
+
       <label>
         Email
         <input
@@ -24,6 +27,7 @@ export default function Login({ onSubmit }) {
           required
         />
       </label>
+
       <label>
         Password
         <input
@@ -34,6 +38,7 @@ export default function Login({ onSubmit }) {
           required
         />
       </label>
+
       <button type="submit" className="login-button">
         Log In
       </button>
