@@ -1,16 +1,31 @@
+/* src/styles/About.css */
 
+/* ————————————————————————— */
+/* Fade-up on scroll setup  */
+/* ————————————————————————— */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
 
+.fade-up-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ————————————————————————— */
+/* Layout & styling */
+/* ————————————————————————— */
 .about-container {
   display: flex;
-  width: 100%;       /* use 100% instead of 100vw */
+  width: 100%;
   height: 100vh;
   background: #ffe9cf;
   color: #ff9233;
 }
 
-/* ————————————————————————— */
 /* Text area styling */
-/* ————————————————————————— */
 .about-text {
   display: flex;
   flex-direction: column;
@@ -22,14 +37,13 @@
   line-height: 1.4;
 }
 
-/* ————————————————————————— */
 /* Image area styling */
-/* ————————————————————————— */
 .about-image {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .about-image img {
   width: 100%;
   height: 100%;
@@ -39,10 +53,7 @@
   pointer-events: none;
 }
 
-/* ————————————————————————— */
 /* Landscape: two 50% columns, full-height */
-/* ————————————————————————— */
-/* Landscape: side by side */
 @media (orientation: landscape) {
   .about-container {
     flex-direction: row;

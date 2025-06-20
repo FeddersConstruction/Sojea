@@ -1,7 +1,21 @@
 /* src/styles/Contact.css */
 
+/* ————————————————————————— */
+/* Fade-up on scroll for title & text (1.5 s ease) */
+/* ————————————————————————— */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+.fade-up-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ────────────────────────────────── */
-/* 1) Container & split logic         */
+/* 1) Container & split logic       */
 /* ────────────────────────────────── */
 .contact-container {
   display: flex;
@@ -12,7 +26,7 @@
 }
 
 /* ────────────────────────────────── */
-/* 2) Image styling                   */
+/* 2) Image styling                 */
 /* ────────────────────────────────── */
 .contact-image {
   position: relative;
@@ -21,7 +35,6 @@
   background: #fffef6;
 }
 
-
 .contact-img {
   width: 100%;
   height: 100%;
@@ -29,7 +42,7 @@
 }
 
 /* ────────────────────────────────── */
-/* 3) Text & typography               */
+/* 3) Text & typography             */
 /* ────────────────────────────────── */
 .contact-text {
   display: flex;
@@ -37,15 +50,13 @@
   justify-content: center;
   padding: 4vh 4vw;
 }
-
 /* ────────────────────────────────── */
-/* 4) Link styling                    */
+/* 4) Link styling                  */
 /* ────────────────────────────────── */
 .contact-link {
   color: #88ffff;
   text-decoration: underline;
 }
-
 
 /* Landscape: side by side */
 @media (orientation: landscape) {

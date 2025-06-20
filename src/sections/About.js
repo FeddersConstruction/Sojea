@@ -1,11 +1,32 @@
-import React from 'react';
+// src/components/About.js
+import React, { useRef, useEffect } from 'react';
 import AboutImg from '../assets/img/About.png';
 import '../styles/About.css';
 
 export default function About() {
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry], obs) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-up-active');
+          obs.unobserve(entry.target);  // only run once
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="about" className="about-container">
-      <div className="about-text">
+      <div ref={textRef} className="about-text fade-up">
         <p className="about-title">About Us</p>
         <p className="about-body">
           We’re a small team passionate about bringing you the best products
