@@ -10,7 +10,7 @@ export default function Footer() {
         <p className="footer-text">© 2025 Sojea</p>
         <div className="footer-icons">
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/profile.php?id=61576149418380"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-icon"
@@ -19,22 +19,13 @@ export default function Footer() {
             <FaFacebookF />
           </a>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/sojea_2025/"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-icon"
             title="Instagram"
           >
             <FaInstagram />
-          </a>
-          <a
-            href="https://x.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-icon"
-            title="Twitter/X"
-          >
-            <FaXTwitter />
           </a>
           <a
             href="https://garrettstrange.com/"
