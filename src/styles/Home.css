@@ -54,7 +54,7 @@
 
 @media (orientation: landscape) {
   .home-logo {
-    max-width: 40%;
+    max-width: 100%;
     margin-bottom: 2vh;
   }
   
