@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "firebase deploy --only hosting"
+    "deploy": "git add . && git commit -m \"Updated commit\" && git push -u --force origin main && firebase deploy --only hosting"
   },
   "eslintConfig": {
     "extends": [
