@@ -27,7 +27,7 @@ export default function About() {
 	return (
 		<section id="about" className="about-container">
 			<div ref={textRef} className="about-text fade-up">
-				<p className="about-title">About Us</p>
+				<p className="about-title">About Me</p>
 				<p className="about-body">
 					&emsp;Hey! I’m Wade Fedders, a 17-year-old from Fort Thomas, KY, and a student at Highlands High School. I started Sójea because I wanted to bring something real to my community—a drink that could be both healthy and refreshing.
 				</p>

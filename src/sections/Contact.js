@@ -37,7 +37,7 @@ export default function Contact() {
       </div>
       <div className="contact-text">
         <p ref={titleRef} className="contact-title fade-up">
-          Contact Us
+          Let's Connect!
         </p>
         <p ref={bodyRef} className="contact-body fade-up">
           Got questions or feedback? We’d love to hear from you!<br />
