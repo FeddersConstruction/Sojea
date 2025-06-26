@@ -72,7 +72,7 @@ export default function Auth() {
             </button>
           </div>
 
-          {/* no more black‐text banner here */}
+          {/* no more text banner here */}
 
           {mode === 'login'
             ? <Login  onSubmit={handleLogin} error={error} />
