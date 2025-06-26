@@ -1,0 +1,249 @@
+.container {
+  min-height: 100vh;
+  background-color: #009039;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Inner card */
+.wrapper {
+  width: 90vw;
+  max-width: 600px;
+  background: #ffe9cf;
+  border: 0.4vw solid #ff9233;
+  border-radius: 1.5vw;
+  box-shadow: 0 1vh 2vh rgba(0,0,0,0.1);
+  padding: 4vh 4vw;
+  box-sizing: border-box;
+}
+
+.wrapper h2 {
+  font-size: 5vh;
+  color: #009039;
+  text-align: center;
+  margin-bottom: 4vh;
+}
+
+.empty-cart {
+  font-size: 3vh;
+  text-align: center;
+  color: #555;
+  margin: 4vh 0;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4vh;
+}
+
+.cart-item {
+  padding: 2.5vh 0;
+  border-bottom: 0.15vh solid #00c86b;
+}
+
+.item-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: nowrap;
+}
+
+.item-name {
+  font-size: 3.5vh;
+  color: #009039;
+  flex: 0 1 auto;
+  min-width: 30%;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+}
+
+.item-controls > button:not(.item-remove) {
+  background: #66b7fb;
+  color: #ffe9cf;
+  border: none;
+  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.item-controls > button:not(.item-remove):hover:not(:disabled) {
+  background: #88ffff;
+}
+
+.item-controls > button:not(.item-remove):disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.item-qty {
+  font-size: 3.5vh;
+  width: 4vh;
+  text-align: center;
+}
+
+.item-controls button.item-remove {
+  background: #ff9233;
+  color: #ffe9cf;
+  border: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.item-controls button.item-remove:hover {
+  background: #d06b00;
+}
+
+.item-subtotal {
+  font-size: 2.5vh;
+  color: #555;
+  text-align: right;
+  margin-bottom: 2vh;
+}
+
+.cart-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  background: #ffda79;
+  padding: 3vh 3vw;
+  border-radius: 1vh;
+  font-size: 3.5vh;
+  color: #009039;
+  margin-bottom: 4vh;
+  gap: 2vh 2vw;
+}
+
+.cart-summary > div {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.cart-summary .summary-value {
+  font-weight: bold;
+  font-size: 4vh;
+  margin-top: 0.5vh;
+}
+
+.checkout-button {
+  width: 100%;
+  padding: 2.5vh 0;
+  font-size: 3.5vh;
+  background: #009039;
+  color: #ffe9cf;
+  border: none;
+  border-radius: 1vh;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkout-button:hover {
+  background: #007a2c;
+}
+
+@media (orientation: portrait) {
+  .wrapper {
+    padding: 3vh 3vw;
+  }
+  .item-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .item-controls {
+    justify-content: flex-start;
+    margin-top: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .item-name {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-size: 4.5vh;
+  }
+  .item-qty {
+    font-size: 2.5vh;
+    width: 3vh;
+  }
+  .item-controls button.item-remove {
+    font-size: 2rem;
+  }
+  .item-subtotal {
+    font-size: 3.5vh;
+    margin-bottom: 3vh;
+  }
+  .cart-summary {
+    padding: 4vh 4vw;
+    font-size: 4vh;
+    gap: 3vh 3vw;
+  }
+  .checkout-button {
+    font-size: 4vh;
+    padding: 3vh 0;
+  }
+}
+
+@media (orientation: landscape) {
+  .wrapper {
+    width: 70vw;
+    padding: 4vh 6vw;
+  }
+  .item-top-row {
+    flex-wrap: nowrap;
+  }
+  .item-name {
+    font-size: 3vh;
+  }
+  .item-controls > button:not(.item-remove) {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+  .item-qty {
+    font-size: 3vh;
+    width: 4vh;
+  }
+  .item-controls button.item-remove {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+  .item-subtotal {
+    font-size: 2vh;
+    margin-bottom: 2vh;
+  }
+  .cart-summary {
+    font-size: 3vh;
+    padding: 3vh 3vw;
+    gap: 2vh 2vw;
+  }
+  .checkout-button {
+    font-size: 2.5vh;
+  }
+}

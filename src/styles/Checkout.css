@@ -1,0 +1,120 @@
+.container {
+  min-height: 100vh;
+  background-color: #009039;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Inner card */
+.wrapper {
+  width: 90vw;
+  max-width: 600px;
+  background: #ffe9cf;
+  border-radius: 1.5vw;
+  box-shadow: 0 1vh 2vh rgba(0,0,0,0.1);
+  padding: 3vh 3vw;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Checkout title */
+.wrapper .checkout-title {
+  font-weight: bolder;
+  font-size: 2.5rem;
+  margin-bottom: 4vh;
+  color: #009039;
+}
+
+/* Any other paragraphs inside card */
+.wrapper p:not(.checkout-title) {
+  font-size: 2vh;
+  color: #009039;
+  margin-bottom: 4vh;
+}
+
+/* Square payment form container */
+.wrapper #card-container {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 3vh;
+}
+
+/* make totals green */
+.green-text {
+  color: #009039;
+}
+
+/* address entry styling */
+.address-entry {
+  margin: 2vh 0 4vh;
+  text-align: left;
+}
+.address-entry label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #009039;
+}
+.address-entry textarea {
+  width: 100%;
+  min-height: 6vh;
+  padding: 1vh 1vw;
+  font-size: 1rem;
+  border: 2px solid #009039;
+  border-radius: 0.5rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* time-entry styling (matches address-entry theme) */
+.time-entry {
+  margin: 2vh 0 4vh;
+  text-align: left;
+}
+.time-entry label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #009039;
+}
+.time-entry input[type="time"] {
+  width: 100%;
+  padding: 1vh 1vw;
+  font-size: 1rem;
+  border: 2px solid #009039;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* ensure your existing portrait/landscape media rules still apply */
+
+/* Portrait (taller) */
+@media (orientation: portrait) {
+  .wrapper {
+    width: 95vw;
+    padding: 4vh 4vw;
+  }
+  .wrapper .checkout-title {
+    font-size: 8vh;
+  }
+  .wrapper p:not(.checkout-title) {
+    font-size: 5vh;
+  }
+}
+
+/* Landscape (wider) */
+@media (orientation: landscape) {
+  .wrapper {
+    width: 70vw;
+    padding: 3vh 5vw;
+  }
+  .wrapper .checkout-title {
+    font-size: 10vh;
+  }
+  .wrapper p:not(.checkout-title) {
+    font-size: 4vh;
+  }
+}
