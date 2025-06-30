@@ -84,6 +84,10 @@ export default function Checkout() {
   const API = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
+    window.alert('🚨 PLEASE ORDER ONLY IF YOU LIVE IN FORT THOMAS');
+  }, []);
+
+  useEffect(() => {
     if (!state || state.totalPrice == null || !state.userId) {
       navigate('/cart');
     }
