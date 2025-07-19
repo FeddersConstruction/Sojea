@@ -1,0 +1,61 @@
+/* src/styles/Login.css */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-title {
+  margin-bottom: 2vh;
+  font-size: 3vh;
+  color: #009039; /* green */
+  text-align: center;
+}
+
+/* red for the error message */
+.login-error {
+  color: #e63946;
+}
+
+.login-form label {
+  margin-bottom: 1.5vh;
+  font-weight: 500;
+  font-size: 2vh;
+  color: #333;
+}
+
+.login-input {
+  width: 100%;
+  padding: 1.5vh 1vw;
+  margin-top: 0.5vh;
+  font-size: 2vh;
+  border: 0.2vh solid #ccc;
+  border-radius: 1vw;
+}
+
+.login-button {
+  margin-top: 3vh;
+  padding: 2vh 0;
+  font-size: 2.5vh;
+  background: #66b7fb;
+  color: white;
+  border: none;
+  border-radius: 1vw;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-button:hover {
+  background: #88ffff;
+}
+
+/* Portrait */
+@media (orientation: portrait) {
+  .login-input { padding: 2vh 2vw; font-size: 2.5vh; }
+  .login-button { font-size: 3vh; }
+}
+
+/* Landscape */
+@media (orientation: landscape) {
+  .login-input { padding: 1vh 1vw; font-size: 2vh; }
+  .login-button { font-size: 2.5vh; }
+}

@@ -1,0 +1,8 @@
+White: #ffe9cf
+Orange: #ff9233
+Green: #009039
+Blue: #66b7fb
+Light Blue: #88ffff
+Light Green: #00c86b
+Orange Temp: #d06b00
+Yellow Temp: #ffda79

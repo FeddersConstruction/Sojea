@@ -1,0 +1,21 @@
+{
+  "name": "sojea",
+  "version": "1.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@google-cloud/storage": "^6.10.0",
+    "@square/web-sdk": "^2.1.0",
+    "square": "^42.3.0", 
+    "stripe": "^18.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "nodemailer": "^6.9.1"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

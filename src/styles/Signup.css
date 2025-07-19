@@ -1,0 +1,60 @@
+/* src/styles/Signup.css */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-title {
+  margin-bottom: 2vh;
+  font-size: 3vh;
+  color: #00c86b; /* light green */
+  text-align: center;
+}
+
+/* red for the error message */
+.signup-error {
+  color: #e63946;
+}
+
+.signup-form label {
+  margin-bottom: 1.5vh;
+  font-weight: 500;
+  font-size: 2vh;
+  color: #333;
+}
+
+.signup-input {
+  width: 100%;
+  padding: 1.5vh 1vw;
+  margin-top: 0.5vh;
+  font-size: 2vh;
+  border: 0.2vh solid #ccc;
+  border-radius: 1vw;
+}
+
+.signup-button {
+  margin-top: 3vh;
+  padding: 2vh 0;
+  font-size: 2.5vh;
+  background: #ff9233;
+  color: white;
+  border: none;
+  border-radius: 1vw;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.signup-button:hover {
+  background: #ffda79;
+}
+
+/* Portrait */
+@media (orientation: portrait) {
+  .signup-input   { padding: 2vh 2vw; font-size: 2.5vh; }
+  .signup-button  { font-size: 3vh; }
+}
+
+/* Landscape */
+@media (orientation: landscape) {
+  .signup-input   { padding: 1vh 1vw; font-size: 2vh; }
+  .signup-button  { font-size: 2.5vh; }
+}

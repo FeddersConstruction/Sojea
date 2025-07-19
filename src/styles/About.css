@@ -1,0 +1,96 @@
+/* src/styles/About.css */
+
+/* ————————————————————————— */
+/* Fade-up on scroll setup  */
+/* ————————————————————————— */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+.fade-up-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ————————————————————————— */
+/* Layout & styling */
+/* ————————————————————————— */
+.about-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background: #ffe9cf;
+  color: #ff9233;
+}
+
+/* Text area styling */
+.about-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4vh 4vw;
+}
+
+.about-text p {
+  line-height: 1.4;
+}
+
+/* Image area styling */
+.about-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-body {
+  text-indent: 2em;
+}
+
+.about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Landscape: two 50% columns, full-height */
+@media (orientation: landscape) {
+  .about-container {
+    flex-direction: row;
+  }
+  .about-image,
+  .about-text {
+    width: 50%;
+    height: 100%;
+  }
+  .about-title {
+    font-size: 6vw;
+    margin-bottom: 4vh;
+  }
+  .about-body {
+    font-size: 1.5vw;
+  }
+}
+
+/* Portrait: stacked, text first */
+@media (orientation: portrait) {
+  .about-container {
+    flex-direction: column;
+  }
+  .about-image,
+  .about-text {
+    width: 100%;
+    height: 50vh;
+  }
+  .about-title {
+    font-size: 10vw;
+    margin-bottom: 2vh;
+  }
+  .about-body {
+    font-size: 2vh;
+  }
+}
