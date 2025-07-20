@@ -9,7 +9,7 @@ export default function ProductCard({
   name,
   price,
   description,
-  soldOut = false,    // ← prop from Products.js
+  soldOut = false,
 }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded]       = useState(false);
@@ -18,19 +18,19 @@ export default function ProductCard({
   const navigate = useNavigate();
   const API = process.env.REACT_APP_API_BASE_URL;
 
-  // debug: log soldOut to console
+  // Debug: see soldOut value
   useEffect(() => {
-    console.log(`Product ${id} soldOut:`, soldOut);
-  }, [id, soldOut]);
+    console.log(`🛒 [${name}] soldOut =`, soldOut);
+  }, [name, soldOut]);
 
-  // auto-open if URL matches
+  // Auto-open description overlay if URL matches
   useEffect(() => {
     if (window.location.pathname === `/products/${id}`) {
       setShowDesc(true);
     }
   }, [id]);
 
-  const handleOpen  = () => setShowDesc(true);
+  const handleOpen = () => setShowDesc(true);
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -44,26 +44,49 @@ export default function ProductCard({
 
   const handleAdd = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return navigate('/auth');
+    if (!user) {
+      console.warn('🔒 Not logged in — redirecting to /auth');
+      return navigate('/auth');
+    }
+
+    const url  = `${API}/api/products/add`;
+    const body = { userId: user.id, productId: id, quantity, name, price };
+
+    console.group(`🛒 Add to Cart [${name}]`);
+    console.log('Request URL:', url);
+    console.log('Request payload:', body);
 
     try {
-      const resp = await fetch(`${API}/api/products/add`, {
+      const resp = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          productId: id,
-          quantity,
-          name,
-          price
-        })
+        body: JSON.stringify(body),
       });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
+
+      let data;
+      try {
+        data = await resp.json();
+      } catch {
+        data = null;
+      }
+
+      console.log('Response status:', resp.status);
+      console.log('Response body:', data);
+
+      if (!resp.ok) {
+        const msg = data?.message || `HTTP ${resp.status}`;
+        console.error('❌ Add-to-cart failed:', msg);
+        alert(`Could not add to cart: ${msg}`);
+      } else {
+        console.log('✅ Added to cart!');
+        setAdded(true);
+        setTimeout(() => setAdded(false), 2000);
+      }
     } catch (err) {
-      console.error('Add to cart failed:', err);
-      alert('Could not add to cart');
+      console.error('🚨 Network or unexpected error:', err);
+      alert('Network error adding to cart');
+    } finally {
+      console.groupEnd();
     }
   };
 
@@ -90,17 +113,20 @@ export default function ProductCard({
       )}
 
       <img src={imageUrl} alt={name} className="product-image" />
+
       <div className="product-main">
         <div className="product-info">
           <h3 className="product-name">{name}</h3>
           <p className="product-price">${price}</p>
         </div>
+
         <div className="product-actions">
           <div className="quantity-controls">
             <button
               onClick={decrement}
               className="quantity-button"
               aria-label="Decrease quantity"
+              disabled={soldOut}
             >
               &minus;
             </button>
@@ -109,10 +135,12 @@ export default function ProductCard({
               onClick={increment}
               className="quantity-button"
               aria-label="Increase quantity"
+              disabled={soldOut}
             >
               +
             </button>
           </div>
+
           <button
             className="add-button"
             onClick={soldOut ? undefined : handleAdd}
