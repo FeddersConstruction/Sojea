@@ -1,4 +1,3 @@
-// src/pages/Products.js
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import '../styles/Products.css';
@@ -13,6 +12,7 @@ export default function Products() {
   const API = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
+    // ← wrap in backticks!
     fetch(`${API}/api/products`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -43,8 +43,9 @@ export default function Products() {
         <p className="products-title">Our Products</p>
         <div className="products-grid">
           {products.map(prod => {
+            // ← backticks here too
             const imageUrl = `${API}/api/products/img/${prod.image}`;
-            const soldOut  = Boolean(prod.soldOut);  // ← ensure this matches your API
+            const soldOut  = Boolean(prod.soldOut);
 
             return (
               <ProductCard

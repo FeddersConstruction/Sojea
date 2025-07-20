@@ -1,34 +1,31 @@
-// server/products.js
 const express = require('express');
 const { Storage } = require('@google-cloud/storage');
-const nodePath   = require('path');        // renamed to avoid collision
+const nodePath   = require('path');   // avoid collision with product.path
 const router     = express.Router();
 
-const storage      = new Storage();
+const storage = new Storage();
 const bucketName   = 'sojea';
 const productsJson = 'products.json';
 
 async function findFile(name) {
   const [files] = await storage.bucket(bucketName).getFiles({ prefix: '' });
   const file = files.find(f => f.name.endsWith(name));
-  if (!file) throw new Error(`File not found: ${name}`);
+  if (!file) throw new Error(`File not found: ${name}`);  // ← backticks
   return file.name;
 }
 
 async function readJson(name) {
   const file = storage.bucket(bucketName).file(name);
   const [exists] = await file.exists();
-  if (!exists) throw new Error(`Missing file: ${name}`);
+  if (!exists) throw new Error(`Missing file: ${name}`);  // ← backticks
   const data = (await file.download())[0];
   return JSON.parse(data.toString());
 }
 
-// ─── Static & download routes FIRST ────────────────────────────────────────────
-
-// Serve product images
+// Serve images
 router.get('/img/:filename', async (req, res) => {
   try {
-    const imgPath = `img/${req.params.filename}`;
+    const imgPath = `img/${req.params.filename}`;          // ← quotes
     const file    = storage.bucket(bucketName).file(imgPath);
     const [exists] = await file.exists();
     if (!exists) return res.status(404).json({ message: 'Image not found' });
@@ -50,13 +47,15 @@ router.get('/:id/download', async (req, res) => {
     const prod     = items.find(p => p.id === +req.params.id);
     if (!prod) return res.status(404).json({ message: 'Not found' });
 
-    const objPath = prod.filePath.replace(/^\//, '');  // renamed in JSON
+    // use your JSON field (renamed to filePath if you like)
+    const objPath = prod.filePath.replace(/^\//, '');
     const file    = storage.bucket(bucketName).file(objPath);
     const [exists] = await file.exists();
     if (!exists) return res.status(404).json({ message: 'File missing' });
 
     const [meta] = await file.getMetadata();
     res.setHeader('Content-Type', meta.contentType || 'application/octet-stream');
+    // ← backticks around the whole header value
     res.setHeader(
       'Content-Disposition',
       `attachment; filename="${nodePath.basename(objPath)}"`
@@ -68,24 +67,21 @@ router.get('/:id/download', async (req, res) => {
   }
 });
 
-// ─── Data routes ────────────────────────────────────────────────────────────────
-
 // List products
 router.get('/', async (req, res) => {
   try {
     const filePath = await findFile(productsJson);
     const items    = await readJson(filePath);
 
-    // include soldOut and rename JSON's path -> filePath
     const sanitized = items.map(
-      ({ id, name, description, price, image, soldOut, path: filePath }) => ({
+      ({ id, name, description, price, image, soldOut, path }) => ({
         id,
         name,
         description,
         price,
         image,
         soldOut: Boolean(soldOut),
-        filePath,
+        filePath: path,    // rename here if you like
       })
     );
 
@@ -104,7 +100,6 @@ router.get('/:id', async (req, res) => {
     const prod     = items.find(p => p.id === +req.params.id);
     if (!prod) return res.status(404).json({ message: 'Not found' });
 
-    // include soldOut in the single product response too
     res.json({ ...prod, soldOut: Boolean(prod.soldOut) });
   } catch (err) {
     console.error(err);
@@ -119,15 +114,13 @@ router.post('/add', async (req, res) => {
     return res.status(400).json({ message: 'Missing required fields' });
   }
   try {
-    // validate user
     const users = await readJson('json/users.json');
     if (!users.some(u => u.id === userId)) {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
-    // update cart
     const cartFile = 'json/cart.json';
-    let cartData   = (await readJson(cartFile)).catch(() => ({}));
+    let cartData   = await readJson(cartFile).catch(() => ({}));
     cartData[userId] = cartData[userId] || [];
     const item = cartData[userId].find(i => i.productId === productId);
     if (item) {
@@ -136,8 +129,7 @@ router.post('/add', async (req, res) => {
       cartData[userId].push({ productId, quantity, name, price });
     }
 
-    await storage
-      .bucket(bucketName)
+    await storage.bucket(bucketName)
       .file(cartFile)
       .save(JSON.stringify(cartData, null, 2));
 
